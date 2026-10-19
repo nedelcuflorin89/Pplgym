@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#14171c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PPL Florin">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2314171c'/%3E%3Crect x='30' y='70' width='120' height='40' rx='6' fill='%23f2a93b'/%3E%3Crect x='18' y='55' width='22' height='70' rx='5' fill='%23e9ecf1'/%3E%3Crect x='140' y='55' width='22' height='70' rx='5' fill='%23e9ecf1'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2314171c'/%3E%3Crect x='30' y='70' width='120' height='40' rx='6' fill='%23f2a93b'/%3E%3Crect x='18' y='55' width='22' height='70' rx='5' fill='%23e9ecf1'/%3E%3Crect x='140' y='55' width='22' height='70' rx='5' fill='%23e9ecf1'/%3E%3C/svg%3E">
+<title>Jurnal PPL Florin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#14171c; --surface:#1d222a; --surface2:#242b35; --line:#313a47;
+  --text:#e9ecf1; --muted:#8b95a5; --amber:#f2a93b; --amber-dim:#5c4520;
+  --green:#4cc38a; --green-dim:#1d3a2d; --red:#e5695e; --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px}
+body{padding:calc(14px + env(safe-area-inset-top)) 12px calc(110px + env(safe-area-inset-bottom))}
+
+h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:26px;letter-spacing:1px;text-transform:uppercase;line-height:1.1}
+h1 .accent{color:var(--amber)}
+.sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+
+.block-label{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+.weekstrip{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.weekstrip::-webkit-scrollbar{display:none}
+.wk{flex:0 0 auto;min-width:46px;padding:8px 4px 6px;border:1px solid var(--line);border-radius:10px;background:var(--surface);text-align:center;cursor:pointer;user-select:none}
+.wk .n{font-family:'Oswald',sans-serif;font-weight:600;font-size:15px}
+.wk .m{font-size:9.5px;color:var(--muted);letter-spacing:.5px}
+.wk.deload .m{color:var(--amber)}
+.wk.sel{border-color:var(--amber);background:linear-gradient(180deg,#2a2417,#1d222a)}
+.wk.sel .n{color:var(--amber)}
+.wk .dots{display:flex;justify-content:center;gap:2.5px;margin-top:4px;height:5px}
+.wk .dot{width:5px;height:5px;border-radius:50%;background:var(--line)}
+.wk .dot.full{background:var(--green)}
+.wk .dot.part{background:var(--amber)}
+
+.daytabs{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:10px 0 12px}
+.dt{padding:8px 2px;border:1px solid var(--line);border-radius:10px;background:var(--surface);text-align:center;cursor:pointer;user-select:none}
+.dt .t{font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;line-height:1}
+.dt .s{font-size:9px;color:var(--muted);margin-top:3px;letter-spacing:.4px}
+.dt.sel{border-color:var(--amber)}
+.dt.sel .t{color:var(--amber)}
+.dt .chk{font-size:10px;color:var(--green);height:12px;margin-top:2px}
+
+.banner{border:1px solid var(--amber-dim);background:#26200f;color:var(--amber);border-radius:var(--radius);padding:10px 12px;font-size:13px;margin-bottom:12px;line-height:1.45}
+.banner b{font-family:'Oswald',sans-serif;letter-spacing:1px}
+.banner.err{border-color:#5c2a25;background:#261311;color:var(--red)}
+
+.dayhead{display:flex;align-items:baseline;justify-content:space-between;margin:4px 2px 10px}
+.dayhead .name{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.5px}
+.dayhead .focus{color:var(--muted);font-size:12px}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.ex.done{border-color:var(--green)}
+.exhead{display:flex;align-items:center;gap:10px;padding:12px}
+.exnum{font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;color:var(--muted);min-width:16px}
+.exinfo{flex:1;min-width:0;cursor:pointer}
+.exname{font-weight:600;font-size:14.5px;line-height:1.25}
+.extarget{font-size:12px;color:var(--amber);margin-top:2px;font-family:'Oswald',sans-serif;letter-spacing:.5px}
+.exnote{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.35}
+.check{width:34px;height:34px;flex:0 0 34px;border-radius:50%;border:2px solid var(--line);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:transparent;font-size:16px;transition:all .15s}
+.ex.done .check{border-color:var(--green);background:var(--green-dim);color:var(--green)}
+.sets{padding:0 12px 12px;display:flex;flex-direction:column;gap:6px}
+.setrow{display:grid;grid-template-columns:44px 1fr 1fr;gap:6px;align-items:center}
+.setrow.deletable{grid-template-columns:44px 1fr 1fr 30px}
+.setdel{background:transparent;border:1px solid var(--line);color:var(--red);border-radius:8px;height:36px;font-size:13px;cursor:pointer;padding:0}
+.setdel:active{border-color:var(--red)}
+.setlabel{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.setrow input{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:9px 10px;font-size:15px;font-family:'Inter',sans-serif;text-align:center}
+.setrow input:focus{outline:none;border-color:var(--amber)}
+.setrow input::placeholder{color:#5a6373;font-size:13px}
+.lastweek{padding:0 12px 12px;font-size:11.5px;color:var(--muted)}
+.lastweek b{color:var(--text);font-weight:600}
+.hist-hint{font-size:10.5px;color:#5a6373;margin-top:2px}
+.rmx{color:var(--red);margin-left:8px;cursor:pointer}
+.addset{align-self:flex-start;margin-top:2px;background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+.addset:active{border-color:var(--amber);color:var(--amber)}
+.addex{width:100%;padding:12px;margin:4px 0 10px;border:1px dashed var(--line);border-radius:var(--radius);background:transparent;color:var(--muted);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.5px;cursor:pointer}
+.addex:active{border-color:var(--amber);color:var(--amber)}
+.addexopt{padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.addexopt:active{background:var(--surface2)}
+.addexopt .exname{font-size:14px}
+.addexopt .extarget{font-size:11.5px;margin-top:2px}
+
+.dayfoot{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:12px;margin-top:14px}
+.bar{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green);border-radius:4px;transition:width .3s}
+.dayfoot span{font-family:'Oswald',sans-serif;font-size:13px;color:var(--muted);letter-spacing:.5px;white-space:nowrap}
+
+.savebtn{position:fixed;bottom:14px;right:12px;z-index:41;padding:11px 18px;border-radius:24px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer}
+.savebtn.dirty{border-color:var(--amber);color:var(--amber)}
+.savebtn.ok{border-color:var(--green);color:var(--green)}
+
+.modal-bg{position:fixed;inset:0;background:rgba(10,12,15,.75);display:none;align-items:flex-end;z-index:50}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-top:1px solid var(--line);border-radius:18px 18px 0 0;width:100%;max-height:75vh;overflow-y:auto;padding:16px 16px 28px}
+.modal h3{font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.5px;margin-bottom:2px}
+.modal .msub{color:var(--muted);font-size:12px;margin-bottom:12px}
+.hrow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.hrow .hw{font-family:'Oswald',sans-serif;color:var(--amber);min-width:64px}
+.hrow .hd{color:var(--text)}
+.hrow .arrow{color:var(--green);font-weight:700}
+.hempty{color:var(--muted);font-size:13px;padding:14px 0}
+.closebtn{width:100%;margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;cursor:pointer}
+
+.status{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom));left:12px;max-width:60%;background:var(--surface2);border:1px solid var(--line);color:var(--muted);border-radius:14px;padding:7px 14px;font-size:11.5px;z-index:40;transition:opacity .3s;opacity:0;pointer-events:none;line-height:1.35}
+.status.show{opacity:1}
+.status.saved{color:var(--green);border-color:var(--green-dim)}
+.status.err{color:var(--red);border-color:#5c2a25}
+
+.timerpill{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:60;background:var(--surface2);border:1px solid var(--amber);color:var(--amber);border-radius:22px;padding:9px 20px;font-family:'Oswald',sans-serif;font-size:17px;letter-spacing:1.5px;display:none;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+.timerpill.on{display:block}
+.timerpill.zero{border-color:var(--green);color:var(--green)}
+.timerpill .tsub{font-size:9.5px;letter-spacing:.5px;color:var(--muted);text-align:center;font-family:'Inter',sans-serif}
+
+.noteta{width:100%;min-height:64px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);color:var(--text);padding:10px 12px;font-size:13.5px;font-family:'Inter',sans-serif;margin-top:12px;resize:vertical}
+.noteta:focus{outline:none;border-color:var(--amber)}
+.notelabel{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+
+.dt .chk .missx{color:var(--red)}
+.wk .dot.miss{background:var(--red)}
+
+.spark{width:100%;height:56px;margin:4px 0 10px;display:block}
+
+.savestate{font-size:11px;color:var(--muted);margin-top:4px}
+.savestate.ok{color:var(--green)} .savestate.err{color:var(--red)}
+nav.bnav{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(20,23,28,.97);border-top:1px solid var(--line)}
+nav.bnav button{flex:1;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer}
+nav.bnav button.on{color:var(--amber);border-color:var(--amber)}
+.exf{display:flex;gap:6px;padding:0 12px 12px}
+.exf button{flex:1;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
+.exf button:active{color:var(--text);border-color:var(--amber)}
+.rir{display:flex;align-items:center;gap:5px;padding:0 12px 10px;font-size:11.5px;color:var(--muted)}
+.rir span{margin-right:4px}
+.rir button{width:34px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
+.rir button.on{background:var(--amber);border-color:var(--amber);color:#1a1200}
+.tech{display:none;margin:0 12px 10px;padding:9px 11px;border-left:2px solid var(--amber);background:#211d14;border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.45;color:#d9c9a6}
+.ex.tipopen .tech{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.card h2{font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:.5px;margin-bottom:4px}
+.card .cap{font-size:11.5px;color:var(--muted);line-height:1.4;margin-bottom:8px}
+.card .txt{font-size:13.5px;line-height:1.5}
+.prow{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.prow:last-child{border-bottom:0}
+.prow .pl{color:var(--text)} .prow .pl small{display:block;color:var(--muted);font-size:11.5px;margin-top:1px}
+.prow .pr2{text-align:right;font-weight:600;white-space:nowrap}
+.bigbtn{width:100%;height:46px;margin-top:8px;border-radius:11px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bigbtn.pri{background:var(--amber);border-color:var(--amber);color:#1a1200}
+.bigbtn.danger{color:var(--red)}
+.bigbtn input{display:none}
+.tip{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:12px}
+.tip b{color:var(--text)}
+.banner.click{cursor:pointer}
+.sugg{color:var(--green)}
+.pr{color:var(--amber);font-weight:700}
+</style>
+</head>
+<body>
+
+<h1>JURNAL FLORIN <span class="accent">PPL</span> — 6 LUNI</h1>
+<div class="sub">Push · Pull · Legs ×2/săpt. · Progresie dublă · RIR 1-2 · v6</div>
+<div class="savestate" id="saveState">—</div>
+
+<div id="storageBanner" class="banner err" style="display:none"></div>
+<div id="backupRemind" class="banner click" style="display:none" onclick="openBackup()"></div>
+
+<div id="viewJournal">
+<div class="block-label" id="blockLabel">BLOC 1 · SĂPTĂMÂNILE 1-6</div>
+<div class="weekstrip" id="weekstrip"></div>
+
+<div class="daytabs" id="daytabs"></div>
+
+<div id="deloadBanner" class="banner" style="display:none">
+  <b>SĂPTĂMÂNĂ DELOAD</b> — volum −50% (jumătate din seturi), RIR 4. Aceleași exerciții, greutăți lejere. Recuperarea e parte din program.
+</div>
+<div id="preDeloadBanner" class="banner" style="display:none">
+  <b>ULTIMA SĂPTĂMÂNĂ GREA DIN BLOC</b> — la ultimul set al fiecărui exercițiu poți merge la RIR 0-1. Săptămâna viitoare e deload.
+</div>
+
+<div id="dlRemind" class="banner" style="display:none"></div>
+
+<div class="dayhead">
+  <div class="name" id="dayName"></div>
+  <div class="focus" id="dayFocus"></div>
+</div>
+
+<div id="exList"></div>
+
+<div class="notelabel">Note — energie, dureri, senzații</div>
+<textarea id="dayNote" class="noteta" placeholder="ex: energie bună, umărul drept a jenat la ultimul set..."></textarea>
+
+<div class="dayfoot">
+  <span id="footLabel">0/6 exerciții</span>
+  <div class="bar"><i id="footBar" style="width:0%"></i></div>
+</div>
+
+<button class="addex" id="weekSummaryBtn" style="margin-top:10px" onclick="openWeekSummary()">Σ Rezumat săptămânal</button>
+<button class="addex" id="deloadBtn" style="margin-top:6px" onclick="openDeloadPicker()">🛌 Setează săptămânile de deload</button>
+<button class="addex" id="skipDayBtn" style="margin-top:6px" onclick="toggleSkipDay()">✕ Marchează ziua ca nefăcută</button>
+</div><!-- /viewJournal -->
+
+<div id="viewProgress" style="display:none"></div>
+
+<div class="timerpill" id="restTimer" onclick="stopRestTimer()"></div>
+
+<nav class="bnav">
+  <button id="nvJournal" class="on" onclick="showView('journal')">Jurnal</button>
+  <button id="nvProgress" onclick="showView('progress')">Progres</button>
+  <button id="nvBackup" onclick="openBackup()">Backup</button>
+  <button id="nvProgram" onclick="openProgram()">Program</button>
+</nav>
+
+<div class="modal-bg" id="backupBg">
+  <div class="modal">
+    <h3>Backup date</h3>
+    <div class="msub" id="backupInfo"></div>
+    <button class="bigbtn pri" onclick="exportJson()">Exportă fișier backup (Drive / WhatsApp / e-mail)</button>
+    <label class="bigbtn"><input type="file" id="importFile" accept=".json,application/json">Importă din fișier backup</label>
+    <div class="msub" style="margin-top:14px">Sau ca text — copiază-l în Notes, ori lipește un backup și apasă Importă:</div>
+    <textarea id="backupTxt" style="width:100%;min-height:140px;background:var(--surface2);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px;font-size:12px;font-family:monospace"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="closebtn" style="margin-top:0" onclick="copyBackup()">Copiază</button>
+      <button class="closebtn" style="margin-top:0;border-color:var(--amber);color:var(--amber)" onclick="importBackup()">Importă</button>
+    </div>
+    <button class="closebtn" onclick="document.getElementById('backupBg').classList.remove('open')">Închide</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="mTitle"></h3>
+    <div class="msub" id="mSub">Istoric — seturile logate pe săptămână</div>
+    <div id="mBody"></div>
+    <button class="closebtn" onclick="closeModal()">Închide</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="addExBg">
+  <div class="modal">
+    <h3 id="addExTitle"></h3>
+    <div class="msub" id="addExSub">Atinge un exercițiu ca să-l adaugi la ziua de azi</div>
+    <div id="addExBody"></div>
+    <button class="closebtn" onclick="document.getElementById('addExBg').classList.remove('open')">Închide</button>
+  </div>
+</div>
+
+<div class="status" id="status">Salvat</div>
+
+<script>
+/* ================= PROGRAM DATA ================= */
+const PROGRAM = [
+ {short:"P-A", name:"Push A", focus:"accent piept", ex:[
+   {n:"Împins la bară, bancă plată (Bench Press)", t:"3 × 6-10", note:"RIR 1-2, excentrică controlată", sets:3, m:"piept", rest:150,
+    tip:"Omoplații strânși și coborâți, tălpile ferm pe podea. Bara coboară spre partea de jos a sternului, coatele la ~45°. Excentrică 2s, atinge pieptul fără să sară bara."},
+   {n:"Incline Press (mașină Multi-Press)", t:"3 × 8-12", note:"", sets:3, m:"piept", rest:120,
+    tip:"Spătarul pe poziția B (înclinat). Omoplații lipiți de spătar, mânerele pornesc de la nivelul pieptului sus. Nu bloca coatele sus."},
+   {n:"Fluturări la cablu, mânere simple (turn funcțional)", t:"2 × 10-15", note:"la înălțimea pieptului, tensiune în întindere", sets:2, m:"piept", rest:75,
+    tip:"Scripeții la înălțimea pieptului, un pas în față. Coatele ușor îndoite și fixe; deschide până simți pieptul întins, apoi adu mâinile în fața sternului."},
+   {n:"Lateral raise cu gantere", t:"4 × 12-20", note:"plan scapular, fără avânt", sets:4, m:"umeri", rest:60,
+    tip:"Ușor aplecat înainte, ridici cu cotul până la nivelul umerilor. Coborâre în 2s, fără balans din trunchi."},
+   {n:"Extensii triceps overhead la cablu, frânghie", t:"3 × 10-15", note:"capul lung în întindere", sets:3, m:"brate", rest:75,
+    tip:"Cu spatele la turn, un picior în față. Coatele lângă cap și fixe; lasă frânghia cât mai jos în spatele capului pentru întindere maximă."},
+   {n:"Pushdown triceps la cablu, bară Z", t:"2 × 10-15", note:"", sets:2, m:"brate", rest:60,
+    tip:"Coatele lipite de corp, nu le lăsa să vină în față. Extensie completă jos, pauză 1s."}
+ ]},
+ {short:"T-A", name:"Pull A", focus:"accent lățime spate", ex:[
+   {n:"Tracțiuni la bară (pull-up), lestate dacă e nevoie", t:"3 × 6-10", note:"", sets:3, m:"spate", rest:150,
+    tip:"Pornești din atârnare completă, tragi pieptul spre bară cu coatele în jos, fără balans. Dacă lucrezi la aparat (asistat/pulldown), loghează greutatea de pe aparat."},
+   {n:"Seated Row (mașină Matrix)", t:"3 × 8-12", note:"", sets:3, m:"spate", rest:120,
+    tip:"Pieptul pe pernă. Tragi coatele pe lângă corp spre spate și strângi omoplații 1s; la revenire lasă umerii să meargă în față pentru întindere."},
+   {n:"Pullover la cablu, frânghie, brațe întinse", t:"2 × 10-15", note:"dorsal în întindere maximă", sets:2, m:"spate", rest:75,
+    tip:"Aplecat ușor din șold, brațele aproape întinse. Aduci frânghia spre coapse din dorsal, nu din triceps; urci lent până simți întinderea."},
+   {n:"Rear delt fly cu gantere, chest-supported pe bancă înclinată", t:"3 × 15-20", note:"excentrică 2s", sets:3, m:"umeri", rest:60,
+    tip:"Pieptul pe banca înclinată, greutate mică. Deschizi brațele lateral cu coatele ușor îndoite, pauză 1s sus."},
+   {n:"Flexii biceps bancă înclinată, gantere", t:"3 × 8-12", note:"capul lung în întindere", sets:3, m:"brate", rest:75,
+    tip:"Banca la 45-60°, brațele atârnă în spatele trunchiului. Coatele nu vin în față; urci supinat, cobori complet."},
+   {n:"Flexii biceps la cablu, bară Z", t:"2 × 10-15", note:"", sets:2, m:"brate", rest:60,
+    tip:"Coatele lipite de corp, fără balans din spate. Tensiune continuă, coborâre controlată."}
+ ]},
+ {short:"L-A", name:"Legs A", focus:"femoral + cvadriceps", ex:[
+   {n:"Leg curl așezat (mașină, seated)", t:"4 × 8-12", note:"RIR 1 — primul, pe mușchi proaspăt", sets:4, m:"posterior", rest:90,
+    tip:"Genunchii aliniați cu pivotul portocaliu, perna fixă pe coapse. Tragi complet, pauză 1s, coborâre în 2-3s."},
+   {n:"Genuflexiuni cu bară (Back Squat, din rack)", t:"3 × 6-10", note:"", sets:3, m:"cvadriceps", rest:180,
+    tip:"Bara pe trapez, pieptul sus. Cobori cel puțin la paralel, genunchii pe direcția vârfurilor. Pune opritoarele rack-ului puțin sub adâncimea de lucru."},
+   {n:"Leg Press (mașină)", t:"2 × 8-12", note:"", sets:2, m:"cvadriceps", rest:120,
+    tip:"Talpa pe mijlocul platformei. Cobori până la ~90° la genunchi sau mai jos, fără să se ridice bazinul. Nu bloca genunchii sus."},
+   {n:"Leg extension (mașină)", t:"2 × 12-15", note:"", sets:2, m:"cvadriceps", rest:75,
+    tip:"Genunchii la pivot, perna deasupra gleznelor. Pauză 1s sus, coborâre în 2-3s."},
+   {n:"Abductor (mașină) — fesier mediu", t:"2 × 12-15", note:"", sets:2, m:"posterior", rest:60,
+    tip:"Spatele pe spătar, deschizi controlat și ții 1s afară. Aplecarea ușoară a trunchiului în față mută accentul pe fesier."},
+   {n:"Cable crunch, frânghie (turn funcțional)", t:"3 × 10-15", note:"", sets:3, m:"core", rest:60,
+    tip:"În genunchi, frânghia lângă cap. Rulezi coloana trăgând coastele spre bazin; șoldurile rămân pe loc."}
+ ]},
+ {short:"P-B", name:"Push B", focus:"accent umeri", ex:[
+   {n:"Shoulder Press (mașină Multi-Press)", t:"3 × 6-10", note:"", sets:3, m:"umeri", rest:150,
+    tip:"Spătarul pe poziția C (vertical), mânerele pornesc la nivelul bărbiei. Împinge fără să arcuiești lombara, nu bloca coatele."},
+   {n:"Presă înclinată cu gantere, bancă înclinată", t:"3 × 8-12", note:"", sets:3, m:"piept", rest:120,
+    tip:"Banca la ~30°. Ganterele cobor la nivelul pieptului, coatele la ~45°; împingi ușor convergent."},
+   {n:"Lateral raise cu gantere", t:"4 × 12-20", note:"opțional: ultimele 2 seturi culcat pe bancă înclinată", sets:4, m:"umeri", rest:60,
+    tip:"Ușor aplecat înainte, ridici cu cotul până la nivelul umerilor. Coborâre în 2s, fără balans din trunchi."},
+   {n:"Chest Press (mașină)", t:"2 × 10-15", note:"", sets:2, m:"piept", rest:90,
+    tip:"Mânerele la nivelul mijlocului pieptului, omoplații pe spătar. Excentrică lentă, întindere completă."},
+   {n:"Extensii triceps overhead la cablu, bară Z (cu spatele la turnul funcțional)", t:"3 × 10-15", note:"", sets:3, m:"brate", rest:75,
+    tip:"Coatele fixe lângă cap; cobori bara în spatele capului pentru întindere maximă, apoi extensie completă."},
+   {n:"Pushdown cu frânghie la cablu", t:"2 × 12-15", note:"", sets:2, m:"brate", rest:60,
+    tip:"Coatele fixe pe lângă corp; jos depărtezi capetele frânghiei și ții 1s."}
+ ]},
+ {short:"T-B", name:"Pull B", focus:"grosime spate + trapez", ex:[
+   {n:"Ramat cu bară (Barbell Row)", t:"3 × 6-10", note:"", sets:3, m:"spate", rest:150,
+    tip:"Trunchiul la ~45°, lombara neutră, genunchii ușor îndoiți. Tragi bara spre buric cu coatele pe lângă corp."},
+   {n:"Lat Pulldown, priză neutră largă (mașină)", t:"3 × 8-12", note:"", sets:3, m:"spate", rest:120,
+    tip:"Coapsele fixate sub perne. Tragi spre piept cu coatele în jos și înapoi; sus lași dorsalul să se întindă complet."},
+   {n:"Shrugs cu gantere", t:"3 × 10-15", note:"pauză 1s sus", sets:3, m:"spate", rest:75,
+    tip:"Ridici umerii drept spre urechi, pauză 1s, coborâre lentă. Fără rotiri."},
+   {n:"Rear delt fly la cablu, mâner simplu, unilateral", t:"3 × 12-20", note:"", sets:3, m:"umeri", rest:60,
+    tip:"Scripetele la înălțimea umerilor. Tragi cu brațul aproape întins, lateral și înapoi; greutate mică, control."},
+   {n:"Flexii ciocan la cablu, frânghie", t:"3 × 8-12", note:"", sets:3, m:"brate", rest:75,
+    tip:"Priză neutră pe frânghie, coatele fixe. Urci spre piept, cobori controlat."},
+   {n:"Wrist curls + extensii antebraț cu gantere", t:"2 × 15-20", note:"", sets:2, m:"brate", rest:60,
+    tip:"Antebrațele sprijinite pe bancă sau pe coapse; amplitudine completă doar din încheietură."}
+ ]},
+ {short:"L-B", name:"Legs B", focus:"posterior chain", ex:[
+   {n:"RDL cu bară", t:"4 × 6-10", note:"excentrică 3s, oprire înainte de rotunjirea lombarei", sets:4, m:"posterior", rest:180,
+    tip:"Bara alunecă pe coapse, împingi șoldurile în spate cu genunchii ușor îndoiți. Te oprești când lombara ar începe să se rotunjească; urci strângând fesierii."},
+   {n:"Hip thrust cu bară (sprijin pe bancă)", t:"3 × 8-12", note:"pauză 1s sus, contracție fesier", sets:3, m:"posterior", rest:120,
+    tip:"Spatele pe bancă la nivelul omoplaților, bărbia spre piept. Împingi din călcâie până bazinul e în linie cu trunchiul, pauză 1s."},
+   {n:"Leg Press, tălpi sus și late (mașină)", t:"3 × 8-12", note:"accent fesier/femural", sets:3, m:"posterior", rest:120,
+    tip:"Tălpile sus și mai late pe platformă duc accentul spre fesier și femural. Cobori adânc, fără să se ridice bazinul."},
+   {n:"Leg extension (mașină)", t:"2 × 12-15", note:"", sets:2, m:"cvadriceps", rest:75,
+    tip:"Genunchii la pivot, perna deasupra gleznelor. Pauză 1s sus, coborâre în 2-3s."},
+   {n:"Adductor (mașină) — interior coapsă", t:"2 × 12-15", note:"", sets:2, m:"acc", rest:60,
+    tip:"Spatele pe spătar. Închizi controlat cu pauză 1s; nu lăsa greutatea să te tragă brusc în deschidere."},
+   {n:"Abdomen cu încărcare (mașină Abdominal)", t:"3 × 10-15", note:"", sets:3, m:"core", rest:60,
+    tip:"Perna la nivelul pieptului. Rulezi trunchiul în jos din abdomen, nu tragi cu brațele."}
+ ]}
+];
+const WEEKS = 24;
+/* Deload: complet selectabil de utilizator — nicio săptămână fixă.
+   DATA.deload (persistat) e sursa adevărului; DELOAD e sincronizat cu el. */
+let DELOAD = [];
+function syncDeload(){
+  if(!Array.isArray(DATA.deload)) DATA.deload = [];
+  DATA.deload = DATA.deload.filter(w=>Number.isInteger(w) && w>=1 && w<=24).sort((a,b)=>a-b);
+  DELOAD = DATA.deload;
+}
+function toggleDeloadWeek(w){
+  syncDeload();
+  const ix = DATA.deload.indexOf(w);
+  if(ix >= 0) DATA.deload.splice(ix,1);
+  else { DATA.deload.push(w); DATA.deload.sort((a,b)=>a-b); }
+  DELOAD = DATA.deload;
+  saveNow();
+  if(VIEW==='progress') renderProgress(); else refreshAll();
+  renderDeloadPicker();
+}
+const MONTH_OF = w => Math.ceil(w/4.0);
+const MASTER_KEY = 'ppl_all_v2';
+
+/* ================= EXERCIȚII ALTERNATIVE (pt. adăugare punctuală) =================
+   Categorie pe tip de zi: index 0,3 = Push · 1,4 = Pull · 2,5 = Legs */
+const CATEGORY_NAME = {push:'Push', pull:'Pull', legs:'Legs'};
+function categoryOf(dayIdx){ return ['push','pull','legs','push','pull','legs'][dayIdx]; }
+/* ================= ÎNLOCUIRI (aceeași grupă musculară, alt aparat/metodă) =================
+   Cheie: dayIdx-exIdx. Înlocuirea e valabilă doar pentru săptămâna curentă. */
+const REPLACEMENTS = {
+  /* Push A */
+  '0-0': [ {n:"Chest Press (mașină)", t:"3 × 8-12", sets:3}, {n:"Presă cu gantere, bancă plată", t:"3 × 6-10", sets:3} ],
+  '0-1': [ {n:"Presă înclinată cu gantere", t:"3 × 8-12", sets:3}, {n:"Împins la bară, bancă înclinată (din rack)", t:"3 × 6-10", sets:3} ],
+  '0-2': [ {n:"Fluturări cu gantere, bancă plată", t:"2 × 10-15", sets:2}, {n:"Fluturări cu gantere, bancă înclinată", t:"2 × 10-15", sets:2} ],
+  '0-3': [ {n:"Lateral raise la cablu, mâner simplu, unilateral", t:"4 × 12-20", sets:4}, {n:"Lateral raise culcat lateral pe bancă înclinată", t:"4 × 12-20", sets:4} ],
+  '0-4': [ {n:"Extensii triceps overhead cu ganteră (două mâini)", t:"3 × 10-15", sets:3}, {n:"Tricep Press (mașină)", t:"3 × 10-15", sets:3} ],
+  '0-5': [ {n:"Pushdown triceps la cablu, frânghie", t:"2 × 10-15", sets:2}, {n:"Tricep Press (mașină)", t:"2 × 10-15", sets:2} ],
+  /* Pull A */
+  '1-0': [ {n:"Lat Pulldown (mașină)", t:"3 × 6-10", sets:3}, {n:"Tracțiuni cu priză supinată (chin-up)", t:"3 × 6-10", sets:3} ],
+  '1-1': [ {n:"Ramat cu bară (Barbell Row)", t:"3 × 8-12", sets:3}, {n:"Ramat la cablu jos, mâner V (turn funcțional)", t:"3 × 8-12", sets:3} ],
+  '1-2': [ {n:"Pullover cu ganteră, culcat pe bancă", t:"2 × 10-15", sets:2} ],
+  '1-3': [ {n:"Face pull la cablu, frânghie", t:"3 × 15-20", sets:3}, {n:"Rear delt fly la cablu, mâner simplu, unilateral", t:"3 × 15-20", sets:3} ],
+  '1-4': [ {n:"Biceps Curl (mașină)", t:"3 × 8-12", sets:3}, {n:"Flexii biceps cu gantere, din picioare", t:"3 × 8-12", sets:3} ],
+  '1-5': [ {n:"Biceps Curl (mașină)", t:"2 × 10-15", sets:2}, {n:"Flexii ciocan cu gantere", t:"2 × 10-15", sets:2} ],
+  /* Legs A */
+  '2-0': [ {n:"RDL cu gantere", t:"4 × 8-12", sets:4}, {n:"Good morning cu bară", t:"4 × 8-12", sets:4} ],
+  '2-1': [ {n:"Leg Press (mașină)", t:"3 × 6-10", sets:3}, {n:"Genuflexiuni bulgare cu gantere", t:"3 × 8-12", sets:3} ],
+  '2-2': [ {n:"Genuflexiuni cu bară (din rack)", t:"2 × 8-12", sets:2}, {n:"Fandări cu gantere, mers", t:"2 × 10-15", sets:2} ],
+  '2-3': [ {n:"Step-up pe bancă cu gantere", t:"2 × 12-15", sets:2}, {n:"Fandări statice cu gantere", t:"2 × 12-15", sets:2} ],
+  '2-4': [ {n:"Abducții culcat lateral, cu ganteră pe coapsă", t:"2 × 12-15", sets:2} ],
+  '2-5': [ {n:"Abdomen cu încărcare (mașină Abdominal)", t:"3 × 10-15", sets:3}, {n:"Ridicări de genunchi atârnat la bara de tracțiuni", t:"3 × 10-15", sets:3} ],
+  /* Push B */
+  '3-0': [ {n:"Presă umeri cu gantere, așezat", t:"3 × 6-10", sets:3}, {n:"Presă militară cu bară, din picioare", t:"3 × 6-10", sets:3} ],
+  '3-1': [ {n:"Incline Press (mașină Multi-Press)", t:"3 × 8-12", sets:3}, {n:"Împins la bară, bancă înclinată (din rack)", t:"3 × 6-10", sets:3} ],
+  '3-2': [ {n:"Lateral raise la cablu, mâner simplu, unilateral", t:"4 × 12-20", sets:4} ],
+  '3-3': [ {n:"Împins la bară, bancă plată (Bench Press)", t:"2 × 8-12", sets:2}, {n:"Presă cu gantere, bancă plată", t:"2 × 10-15", sets:2} ],
+  '3-4': [ {n:"Extensii triceps overhead la cablu, frânghie", t:"3 × 10-15", sets:3}, {n:"Extensii triceps overhead cu ganteră (două mâini)", t:"3 × 10-15", sets:3} ],
+  '3-5': [ {n:"Pushdown triceps la cablu, bară Z", t:"2 × 12-15", sets:2}, {n:"Tricep Press (mașină)", t:"2 × 12-15", sets:2} ],
+  /* Pull B */
+  '4-0': [ {n:"Seated Row (mașină Matrix)", t:"3 × 6-10", sets:3}, {n:"Ramat unilateral cu ganteră, sprijin pe bancă", t:"3 × 8-12", sets:3} ],
+  '4-1': [ {n:"Tracțiuni la bară (pull-up)", t:"3 × 6-10", sets:3}, {n:"Lat Pulldown, priză îngustă, mâner V", t:"3 × 8-12", sets:3} ],
+  '4-2': [ {n:"Shrugs cu bară", t:"3 × 10-15", sets:3} ],
+  '4-3': [ {n:"Face pull la cablu, frânghie", t:"3 × 12-20", sets:3}, {n:"Rear delt fly cu gantere, chest-supported pe bancă înclinată", t:"3 × 15-20", sets:3} ],
+  '4-4': [ {n:"Flexii ciocan cu gantere", t:"3 × 8-12", sets:3}, {n:"Biceps Curl (mașină)", t:"3 × 8-12", sets:3} ],
+  '4-5': [ {n:"Farmer's hold cu gantere grele (prindere)", t:"2 × 30-45s", sets:2} ],
+  /* Legs B */
+  '5-0': [ {n:"RDL cu gantere", t:"4 × 6-10", sets:4}, {n:"Good morning cu bară", t:"4 × 8-12", sets:4} ],
+  '5-1': [ {n:"Glute bridge cu bară, pe podea", t:"3 × 8-12", sets:3}, {n:"Hip thrust unilateral, cu ganteră", t:"3 × 10-15", sets:3} ],
+  '5-2': [ {n:"Genuflexiuni bulgare cu gantere", t:"3 × 8-12", sets:3}, {n:"Fandări cu gantere, mers", t:"3 × 10-15", sets:3} ],
+  '5-3': [ {n:"Step-up pe bancă cu gantere", t:"2 × 12-15", sets:2}, {n:"Fandări statice cu gantere", t:"2 × 12-15", sets:2} ],
+  '5-4': [ {n:"Sumo squat cu ganteră (accent adductori)", t:"2 × 12-15", sets:2} ],
+  '5-5': [ {n:"Cable crunch, frânghie (turn funcțional)", t:"3 × 10-15", sets:3}, {n:"Ridicări de genunchi atârnat la bara de tracțiuni", t:"3 × 10-15", sets:3} ]
+};
+
+const EXTRA_EXERCISES = {
+  push: [
+    {n:"Dips la paralele (lestate sau bodyweight)", t:"3 × 8-12", m:"piept", sets:3},
+    {n:"Presă militară cu bară, din picioare (Overhead Press)", t:"3 × 6-10", m:"umeri", sets:3},
+    {n:"Presă declinată cu gantere", t:"3 × 8-12", m:"piept", sets:3},
+    {n:"Fluturări posterioare la cablu, priză încrucișată (rear delt)", t:"3 × 12-20", m:"umeri", sets:3},
+    {n:"Flotări cu picioarele ridicate pe bancă", t:"3 × 12-20", m:"piept", sets:3},
+    {n:"Extensii triceps la cablu, priză inversă, bară Z", t:"2 × 10-15", m:"brate", sets:2}
+  ],
+  pull: [
+    {n:"Face pull la cablu, frânghie", t:"3 × 12-20", m:"umeri", sets:3},
+    {n:"Tracțiuni cu priză supinată (chin-up)", t:"3 × 6-10", m:"spate", sets:3},
+    {n:"Ramat unilateral cu gantera, sprijin pe bancă", t:"3 × 8-12", m:"spate", sets:3},
+    {n:"Ramat T-bar (bară fixată în colțul rack-ului)", t:"3 × 8-12", m:"spate", sets:3},
+    {n:"Flexii biceps cu gantere, priză ciocan", t:"3 × 8-12", m:"brate", sets:3},
+    {n:"Lat pulldown, priză largă pronată (mașină)", t:"3 × 8-12", m:"spate", sets:3}
+  ],
+  legs: [
+    {n:"Genuflexiuni bulgare cu gantere", t:"3 × 8-12", m:"cvadriceps", sets:3},
+    {n:"Fandări cu gantere, mers", t:"3 × 10-15", m:"cvadriceps", sets:3},
+    {n:"Good morning cu bară", t:"3 × 8-12", m:"posterior", sets:3},
+    {n:"Step-up pe bancă cu gantere", t:"3 × 8-12", m:"cvadriceps", sets:3},
+    {n:"Gambe (calf raise) la Leg Press", t:"4 × 10-15", m:"acc", sets:4},
+    {n:"Glute bridge unilateral cu gantere", t:"3 × 10-15", m:"posterior", sets:3}
+  ]
+};
+
+/* ================= STATE ================= */
+/* Tot jurnalul stă într-un singur obiect -> o singură cheie de storage.
+   days["w{w}d{d}"] = { ex:[{done, sets:[{w,r}]}] } */
+let DATA = { days:{
+  /* recuperat din poze — Săpt. 1, Push A (pierdut înainte de fix-ul de salvare) */
+  w1d1: { ex: [
+    { done:true, sets:[{w:'40',r:'14'},{w:'50',r:'8'},{w:'60',r:'9'}] },
+    { done:true, sets:[{w:'43',r:'7'},{w:'43',r:'7'},{w:'43',r:'8'}] },
+    { done:true, sets:[{w:'6.8',r:'9'},{w:'6.8',r:'9'}] },
+    { done:true, sets:[{w:'4',r:'30'},{w:'6',r:'15'},{w:'5',r:'20'},{w:'4',r:'30'}] },
+    { done:true, sets:[{w:'11.3',r:'10'},{w:'11.3',r:'8'},{w:'11.3',r:'6'}] },
+    { done:true, sets:[{w:'20.4',r:'9'},{w:'18.1',r:'12'}] }
+  ]}
+} };
+
+/* ============ DATE RECUPERATE DIN SCREENSHOT-URI (S5-S10) ============
+   Se aplică NE-distructiv: doar zilele care lipsesc din salvare se completează. */
+const FACEPULL_REPL = { n:"Face pull la cablu, frânghie", t:"3 × 15-20", sets:3 };
+const SEED_DAYS = {
+  w5d1: { ex:[
+    {done:true, sets:[{w:'40',r:'12'},{w:'50',r:'12'},{w:'60',r:'10'}]},
+    {done:true, sets:[{w:'45.3',r:'12'},{w:'45.3',r:'10'},{w:'45.3',r:'9'}]},
+    {done:true, sets:[{w:'6.8',r:'17'},{w:'9.1',r:'9'}]},
+    {done:true, sets:[{w:'9',r:'16'},{w:'9',r:'15'},{w:'9',r:'16'},{w:'9',r:'16'}]},
+    {done:true, sets:[{w:'11.3',r:'14'},{w:'11.3',r:'12'},{w:'11.3',r:'12'}]},
+    {done:true, sets:[{w:'20.4',r:'14'},{w:'20.4',r:'14'},{w:'20.4',r:'9'}]}
+  ], extra:[], repl:{}, note:'' },
+  w5d2: { ex:[
+    {done:true, sets:[{w:'57',r:'14'},{w:'59.3',r:'10'},{w:'59.3',r:'8'}]},
+    {done:true, sets:[{w:'50',r:'11'},{w:'50',r:'11'},{w:'50',r:'10'}]},
+    {done:true, sets:[{w:'13.6',r:'20'},{w:'15.9',r:'13'}]},
+    {done:true, sets:[{w:'18.1',r:'19'},{w:'18.1',r:'16'},{w:'18.1',r:'14'},{w:'18.1',r:'12'}]},
+    {done:true, sets:[{w:'10',r:'14'},{w:'10',r:'12'},{w:'10',r:'11'}]},
+    {done:true, sets:[{w:'15.9',r:'15'},{w:'15.9',r:'12'}]}
+  ], extra:[], repl:{3:FACEPULL_REPL}, note:'' },
+  w6d1: { ex:[
+    {done:true, sets:[{w:'40',r:'6'},{w:'40',r:'6'}]},
+    {done:true, sets:[{w:'29',r:'8'},{w:'29',r:'8'}]},
+    {done:true, sets:[{w:'4.5',r:'12'},{w:'4.5',r:'12'}]},
+    {done:true, sets:[{w:'6',r:'12'},{w:'6',r:'12'}]},
+    {done:true, sets:[{w:'7',r:'10'},{w:'7',r:'10'}]},
+    {done:true, sets:[{w:'13.6',r:'10'},{w:'13.6',r:'10'}]}
+  ], extra:[], repl:{}, note:'deload' },
+  w6d2: { ex:[
+    {done:true, sets:[{w:'36',r:'7'},{w:'36',r:'7'}]},
+    {done:true, sets:[{w:'30',r:'8'},{w:'30',r:'8'}]},
+    {done:true, sets:[{w:'9',r:'10'},{w:'9',r:'10'}]},
+    {done:true, sets:[{w:'11',r:'15'},{w:'11',r:'15'}]},
+    {done:true, sets:[{w:'6',r:'8'},{w:'6',r:'8'}]},
+    {done:true, sets:[{w:'9',r:'10'},{w:'9',r:'10'}]}
+  ], extra:[], repl:{3:FACEPULL_REPL}, note:'deload' },
+  w7d3: { ex:[
+    {done:true, sets:[{w:'38.3',r:'20'},{w:'45.3',r:'17'},{w:'50',r:'14'},{w:'50',r:'12'}]},
+    {done:true, sets:[{w:'40',r:'10'},{w:'50',r:'10'},{w:'50',r:'10'}]},
+    {done:true, sets:[{w:'75',r:'14'},{w:'86',r:'12'}]},
+    {done:true, sets:[{w:'36',r:'10'},{w:'36',r:'14'}]},
+    {done:true, sets:[{w:'43',r:'15'},{w:'50',r:'14'}]},
+    {done:true, sets:[{w:'45.3',r:'20'},{w:'52.3',r:'15'},{w:'52.3',r:'13'}]}
+  ], extra:[], repl:{}, note:'' },
+  w8d3: { ex:[
+    {done:true, sets:[{w:'43',r:'12'},{w:'50',r:'12'},{w:'52.3',r:'12'},{w:'52.3',r:'12'}]},
+    {done:true, sets:[{w:'40',r:'10'},{w:'50',r:'10'},{w:'50',r:'10'}]},
+    {done:true, sets:[{w:'88.3',r:'12'},{w:'88.3',r:'12'}]},
+    {done:true, sets:[{w:'36',r:'15'},{w:'38.3',r:'15'}]},
+    {done:true, sets:[{w:'50',r:'15'},{w:'50',r:'15'}]},
+    {done:true, sets:[{w:'0',r:'15'},{w:'0',r:'15'},{w:'0',r:'11'}]}
+  ], extra:[], repl:{5:{n:"Ridicări de genunchi atârnat la bara de tracțiuni", t:"3 × 10-15", sets:3}}, note:'' },
+  w9d1: { ex:[
+    {done:true, sets:[{w:'40',r:'12'},{w:'50',r:'12'},{w:'60',r:'8'},{w:'70',r:'1'}]},
+    {done:true, sets:[{w:'50',r:'9'},{w:'50',r:'7'},{w:'50',r:'9'}]},
+    {done:true, sets:[{w:'9.1',r:'12'},{w:'9.1',r:'10'}]},
+    {done:true, sets:[{w:'9',r:'20'},{w:'9',r:'20'},{w:'9',r:'20'},{w:'9',r:'20'}]},
+    {done:true, sets:[{w:'13.6',r:'10'},{w:'13.6',r:'8'},{w:'13.6',r:'7'}]},
+    {done:true, sets:[{w:'22.7',r:'12'},{w:'22.7',r:'11'},{w:'22.7',r:'8'}]}
+  ], extra:[], repl:{}, note:'' },
+  w9d2: { ex:[
+    {done:true, sets:[{w:'50',r:'10'},{w:'57',r:'9'},{w:'57',r:'7'}]},
+    {done:true, sets:[{w:'50',r:'11'},{w:'50',r:'11'},{w:'50',r:'10'}]},
+    {done:true, sets:[{w:'15.9',r:'15'},{w:'18.1',r:'14'}]},
+    {done:true, sets:[{w:'18.1',r:'20'},{w:'18.1',r:'20'},{w:'20.4',r:'17'}]},
+    {done:true, sets:[{w:'12',r:'14'},{w:'14',r:'8'},{w:'12',r:'13'}]},
+    {done:true, sets:[{w:'18.1',r:'12'},{w:'18.1',r:'15'}]}
+  ], extra:[], repl:{3:FACEPULL_REPL}, note:'' },
+  w10d1: { ex:[
+    {done:true, sets:[{w:'40',r:'12'},{w:'50',r:'12'},{w:'50',r:'10'},{w:'60',r:'4'}]},
+    {done:true, sets:[{w:'50',r:'9'},{w:'50',r:'9'},{w:'50',r:'7'}]},
+    {done:true, sets:[{w:'9.1',r:'12'},{w:'9.1',r:'11'}]},
+    {done:true, sets:[{w:'9',r:'17'},{w:'9',r:'17'},{w:'9',r:'17'},{w:'9',r:'15'}]},
+    {done:true, sets:[{w:'13.6',r:'10'},{w:'13.6',r:'9'},{w:'13.6',r:'7'}]},
+    {done:true, sets:[{w:'22.7',r:'11'},{w:'22.7',r:'9'}]}
+  ], extra:[], repl:{}, note:'' },
+  w10d2: { ex:[
+    {done:true, sets:[{w:'36',r:'12'},{w:'50',r:'11'},{w:'59.3',r:'9'}]},
+    {done:true, sets:[{w:'36',r:'10'},{w:'50',r:'12'},{w:'57',r:'10'}]},
+    {done:true, sets:[{w:'15.9',r:'15'},{w:'20.4',r:'10'}]},
+    {done:true, sets:[{w:'13.6',r:'15'},{w:'13.6',r:'20'},{w:'20.4',r:'17'}]},
+    {done:true, sets:[{w:'12',r:'14'},{w:'12',r:'11'},{w:'14',r:'6'}]},
+    {done:true, sets:[{w:'15.9',r:'14'},{w:'20.4',r:'7'}]}
+  ], extra:[], repl:{3:FACEPULL_REPL}, note:'' },
+  w10d3: { ex:[
+    {done:true, sets:[{w:'43',r:'12'},{w:'57',r:'10'},{w:'57',r:'9'},{w:'57',r:'9'}]},
+    {done:true, sets:[{w:'40',r:'10'},{w:'50',r:'10'},{w:'50',r:'10'}]},
+    {done:true, sets:[{w:'86',r:'13'},{w:'97',r:'12'},{w:'120',r:'6'}]},
+    {done:true, sets:[{w:'43',r:'12'},{w:'43',r:'12'}]},
+    {done:true, sets:[{w:'50',r:'15'},{w:'63',r:'13'}]},
+    {done:true, sets:[{w:'43',r:'12'},{w:'57',r:'15'},{w:'57',r:'15'}]}
+  ], extra:[], repl:{}, note:'' }
+};
+function applySeed(){
+  Object.keys(SEED_DAYS).forEach(k=>{
+    if(!DATA.days[k]) DATA.days[k] = JSON.parse(JSON.stringify(SEED_DAYS[k]));
+  });
+  if(!Array.isArray(DATA.deload)) DATA.deload = [];
+  if(!DATA.deload.includes(6)) DATA.deload.push(6);
+}
+let curWeek = 1, curDay = 0;
+let saveTimer = null, dirty = false;
+/* MODE decide totul; vezi detectStorage() */
+
+function dkey(w,d){ return 'w'+w+'d'+(d+1); }
+function blankLog(d){
+  return { ex: PROGRAM[d].ex.map(e=>({done:false, sets:Array.from({length:e.sets},()=>({w:'',r:''}))})), extra: [], repl: {}, note: '', skipped: false };
+}
+function getLog(w,d){
+  const k = dkey(w,d);
+  if(!DATA.days[k]) DATA.days[k] = blankLog(d);
+  else {
+    // normalizează structura (în caz de versiuni vechi), dar păstrează seturile
+    // adăugate manual în plus (nu trunchia la numărul standard din program)
+    const log = DATA.days[k], fresh = blankLog(d);
+    fresh.ex.forEach((fe,i)=>{
+      const se = log.ex && log.ex[i];
+      if(se){
+        fe.done = !!se.done;
+        fe.rir = (se.rir===0||se.rir) ? se.rir : null;
+        const savedSets = se.sets || [];
+        // respectă EXACT numărul de seturi salvate (mai multe SAU mai puține decât standardul) —
+        // altfel un set șters ar reapărea la următoarea randare
+        if(savedSets.length) fe.sets = savedSets.map(s=>({w:s.w||'', r:s.r||''}));
+      }
+    });
+    // exercițiile adăugate punctual (doar pentru această săptămână/zi) se păstrează ca atare
+    fresh.extra = Array.isArray(log.extra) ? log.extra.map(x=>({
+      n:x.n, t:x.t, m:x.m||null, done:!!x.done, rir:(x.rir===0||x.rir)?x.rir:null,
+      sets:(x.sets||[]).map(s=>({w:s.w||'', r:s.r||''}))
+    })) : [];
+    // înlocuirile punctuale (aceeași săptămână) se păstrează
+    fresh.repl = {};
+    if(log.repl && typeof log.repl==='object'){
+      Object.keys(log.repl).forEach(k=>{
+        const r = log.repl[k];
+        if(r && r.n) fresh.repl[k] = {n:r.n, t:r.t||'', sets:r.sets||3, tip:r.tip||''};
+      });
+    }
+    fresh.note = typeof log.note==='string' ? log.note : '';
+    fresh.skipped = !!log.skipped;
+    DATA.days[k] = fresh;
+  }
+  return DATA.days[k];
+}
+function hasEntries(w,d){
+  const log = DATA.days[dkey(w,d)];
+  if(!log) return false;
+  const inMain = log.ex.some(e=>e.done || e.sets.some(s=>s.w!==''||s.r!==''));
+  const inExtra = (log.extra||[]).some(e=>e.done || e.sets.some(s=>s.w!==''||s.r!==''));
+  return inMain || inExtra;
+}
+function dayPct(w,d){
+  const log = DATA.days[dkey(w,d)];
+  if(!log) return 0;
+  const all = log.ex.concat(log.extra||[]);
+  return all.filter(e=>e.done).length / all.length;
+}
+function dayVolume(w,d){
+  const log = DATA.days[dkey(w,d)];
+  if(!log) return 0;
+  let v = 0;
+  log.ex.concat(log.extra||[]).forEach(e=>e.sets.forEach(s=>{
+    const kg = parseFloat(String(s.w).replace(',','.')), rep = parseFloat(s.r);
+    if(kg>0 && rep>0) v += kg*rep;
+  }));
+  return v;
+}
+function fmtVol(v){ return v>=1000 ? (v/1000).toFixed(1).replace('.',',')+' t' : Math.round(v)+' kg'; }
+function lastEntryPos(){
+  let last = null;
+  for(let w=1; w<=WEEKS; w++) for(let d=0; d<6; d++){
+    const log = DATA.days[dkey(w,d)];
+    if(hasEntries(w,d) || (log && log.skipped)) last = {w,d};
+  }
+  return last;
+}
+function isSkipped(w,d){
+  const log = DATA.days[dkey(w,d)];
+  if(log && log.skipped) return true;
+  const last = lastEntryPos();
+  if(!last || hasEntries(w,d)) return false;
+  return w < last.w || (w === last.w && d < last.d);
+}
+/* Ultima săptămână în care ziua d a fost logată, înainte de "before".
+   Sare peste săptămânile de deload; dacă doar deload există, o folosește pe aceea. */
+function refWeekFor(d, before){
+  let deloadFallback = null;
+  for(let w = before-1; w >= 1; w--){
+    if(hasEntries(w,d)){
+      if(!DELOAD.includes(w)) return w;
+      if(deloadFallback === null) deloadFallback = w;
+    }
+  }
+  return deloadFallback;
+}
+/* Ultima performanță a unui exercițiu anume (după nume), oriunde a apărut:
+   slot principal, înlocuitor sau exercițiu adăugat manual — înainte de poziția (beforeW, beforeD).
+   Preferă săptămâni normale; dacă există doar în deload, folosește acea intrare. */
+function lastPerformanceOf(name, beforeW, beforeD){
+  const norm = s => String(s).trim().toLowerCase();
+  const target = norm(name);
+  let best = null, bestDl = null;
+  for(let w=1; w<=WEEKS; w++){
+    for(let d=0; d<6; d++){
+      if(w > beforeW || (w === beforeW && d >= beforeD)) continue;
+      if(!DATA.days[dkey(w,d)]) continue;
+      const log = getLog(w,d);
+      const cands = [];
+      PROGRAM[d].ex.forEach((e,i)=>{
+        const nm = (log.repl && log.repl[i]) ? log.repl[i].n : e.n;
+        cands.push({nm, entry:log.ex[i]});
+      });
+      (log.extra||[]).forEach(x=>cands.push({nm:x.n, entry:x}));
+      cands.forEach(c=>{
+        if(norm(c.nm) === target && fmtSets(c.entry)){
+          const rec = {w, d, entry:c.entry};
+          if(DELOAD.includes(w)) bestDl = rec; else best = rec;
+        }
+      });
+    }
+  }
+  return best || bestDl;
+}
+/* pauza, grupa și tehnica pentru orice exercițiu afișat (original, înlocuitor sau adăugat) */
+function restFor(def, slotDef){
+  if(def && def.rest) return def.rest;
+  if(slotDef && slotDef.rest) return slotDef.rest;
+  const r = parseRepRange(def ? def.t : '');
+  return r && r.min<=8 ? 150 : 75;
+}
+function fmtRest(sec){ return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); }
+function parseRepRange(t){
+  const m = String(t).match(/(\d+)\s*[-–]\s*(\d+)/);
+  return m ? {min:+m[1], max:+m[2]} : null;
+}
+function bestSetW(entry){
+  let best = 0;
+  entry.sets.forEach(s=>{
+    const kg = parseFloat(String(s.w).replace(',','.')), rep = parseFloat(s.r);
+    if(kg>0 && rep>0 && kg>best) best = kg;
+  });
+  return best;
+}
+function suggestToday(prevEntry, def){
+  const range = parseRepRange(def.t);
+  if(!range) return null;
+  const valid = prevEntry.sets.filter(s=>{
+    const kg = parseFloat(String(s.w).replace(',','.')), rep = parseFloat(s.r);
+    return kg>0 && rep>0;
+  });
+  if(!valid.length) return null;
+  const bw = bestSetW(prevEntry);
+  const allTop = valid.every(s=>parseFloat(s.r) >= range.max);
+  return allTop
+    ? {txt:'crește la <b>'+String(Math.round((bw+2.5)*10)/10).replace('.',',')+' kg</b> (ai atins topul la toate)', up:true}
+    : {txt:'rămâi la <b>'+String(bw).replace('.',',')+' kg</b>, țintește repetări în plus', up:false};
+}
+/* Deload: ~60% din cel mai greu set al ultimei săptămâni normale,
+   jumătate din serii, repetări la capătul de jos al intervalului, RIR 4. */
+function deloadSuggest(prevEntry, def){
+  const bw = bestSetW(prevEntry);
+  if(bw <= 0) return null;
+  const range = parseRepRange(def.t);
+  const nSets = Math.max(1, Math.ceil((def.sets || prevEntry.sets.length || 3)/2));
+  const w60 = Math.round(bw*0.6*2)/2;
+  const reps = range ? range.min : 8;
+  return '~<b>'+String(w60).replace('.',',')+' kg</b> · '+nSets+' serii × '+reps+' rep (60% din '+String(bw).replace('.',',')+' kg, RIR 4)';
+}
+
+/* ================= SALVARE =================
+   O singură cale, sincronă: localStorage pe adresa ta (GitHub Pages).
+   Se salvează la fiecare modificare (200ms) și forțat când închizi / ascunzi aplicația. */
+let MODE = 'memory';
+function detectStorage(){
+  try{
+    localStorage.setItem('ppl_probe','1');
+    if(localStorage.getItem('ppl_probe')==='1'){ localStorage.removeItem('ppl_probe'); MODE='local'; return; }
+  }catch(e){}
+  MODE = 'memory';
+}
+function isEphemeralHost(){
+  try{
+    return location.origin==='null' || window.top!==window.self || /claude\.(ai|site)|claudeusercontent/.test(location.hostname);
+  }catch(e){ return true; }
+}
+function loadAll(){
+  let v = null;
+  if(MODE==='local'){ try{ v = localStorage.getItem(MASTER_KEY); }catch(e){} }
+  if(v){ try{ const o = JSON.parse(v); if(o && o.days){ DATA = o; } }catch(e){} }
+  if(!DATA.days) DATA.days = {};
+  applySeed();
+  syncDeload();
+}
+function scheduleSave(){
+  dirty = true;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 200);
+}
+function saveNow(){
+  clearTimeout(saveTimer);
+  if(MODE==='memory'){ setSaveState('NESALVAT — acest mediu nu păstrează datele. Folosește Backup.', 'err'); return false; }
+  try{
+    DATA.updated = new Date().toISOString();
+    localStorage.setItem(MASTER_KEY, JSON.stringify(DATA));
+    dirty = false;
+    setSaveState('Salvat ✓ '+new Date().toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'})+' · pe acest telefon', 'ok');
+    renderWeekstrip(); renderDaytabs(); updateBackupReminder();
+    return true;
+  }catch(e){
+    setSaveState('EROARE la salvare: '+(e && e.message ? e.message : e)+' — fă Backup acum', 'err');
+    return false;
+  }
+}
+function flushSave(){ if(dirty) saveNow(); }
+window.addEventListener('pagehide', flushSave);
+window.addEventListener('beforeunload', flushSave);
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) flushSave(); });
+function setSaveState(t, cls){
+  const el = document.getElementById('saveState');
+  el.textContent = t; el.className = 'savestate '+(cls||'');
+}
+function flash(msg, cls){
+  const s = document.getElementById('status');
+  s.textContent = msg; s.className = 'status show ' + (cls||'');
+  setTimeout(()=>{ s.className='status'; }, cls==='err'?5000:1400);
+}
+
+/* ================= HELPERS ================= */
+function bestSet(entry){
+  let best = null;
+  entry.sets.forEach(s=>{
+    const w = parseFloat(String(s.w).replace(',','.'));
+    const r = parseFloat(s.r);
+    if(!isNaN(w) && w>0 && !isNaN(r) && r>0 && (best===null || w>best.w)) best = {w:w, r:s.r};
+  });
+  return best;
+}
+function fmtSets(entry){
+  return entry.sets.filter(s=>s.w!==''||s.r!=='')
+    .map(s=>(s.w||'?')+'kg×'+(s.r||'?')).join(' · ');
+}
+function esc(v){ return String(v).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+/* ================= AUTO-ADVANCE la următoarea căsuță goală ================= */
+let advTimer = null;
+function scheduleAdvance(input){
+  clearTimeout(advTimer);
+  if(input.value === '') return; // nu sări dintr-o căsuță încă goală
+  advTimer = setTimeout(()=>advanceFrom(input), 1100);
+}
+function advanceFrom(input){
+  // dacă utilizatorul a plecat deja din câmp, nu interveni
+  if(document.activeElement !== input) return;
+  const inputs = Array.from(document.querySelectorAll('#exList input'));
+  const idx = inputs.indexOf(input);
+  if(idx === -1) return;
+  // următoarea căsuță goală DUPĂ cea curentă (kg -> rep -> setul următor -> exercițiul următor)
+  for(let i=idx+1; i<inputs.length; i++){
+    if(inputs[i].value === ''){
+      inputs[i].focus();
+      inputs[i].scrollIntoView({block:'center', behavior:'smooth'});
+      return;
+    }
+  }
+  // nimic gol după — ziua e completă; închide tastatura
+  input.blur();
+  flash('Toate seturile logate ✓ — bifează exercițiile','saved');
+}
+
+/* ================= RENDER: WEEK STRIP ================= */
+function renderWeekstrip(doScroll){
+  const el = document.getElementById('weekstrip');
+  el.innerHTML = '';
+  for(let w=1; w<=WEEKS; w++){
+    const div = document.createElement('div');
+    div.className = 'wk' + (w===curWeek?' sel':'') + (DELOAD.includes(w)?' deload':'');
+    let dots = '';
+    for(let d=0; d<6; d++){
+      const p = dayPct(w,d);
+      const lg = DATA.days[dkey(w,d)];
+      const cls = (lg && lg.skipped) ? 'miss' : (p>=1?'full':(p>0?'part':(isSkipped(w,d)?'miss':'')));
+      dots += '<span class="dot '+cls+'"></span>';
+    }
+    div.innerHTML = '<div class="n">'+w+'</div><div class="m">'+(DELOAD.includes(w)?'DELOAD':('L'+MONTH_OF(w)))+'</div><div class="dots">'+dots+'</div>';
+    div.onclick = ()=>{ curWeek = w; DATA.cur = {w:curWeek, d:curDay}; scheduleSave(); refreshAll(true); };
+    el.appendChild(div);
+  }
+  const bl = Math.ceil(curWeek/6);
+  document.getElementById('blockLabel').textContent =
+    'BLOC '+bl+' · SĂPTĂMÂNILE '+((bl-1)*6+1)+'-'+(bl*6)+' · LUNA '+MONTH_OF(curWeek);
+  if(doScroll){
+    const sel = el.querySelector('.wk.sel');
+    if(sel) sel.scrollIntoView({inline:'center', block:'nearest'});
+  }
+}
+
+/* ================= RENDER: DAY TABS ================= */
+function renderDaytabs(){
+  const el = document.getElementById('daytabs');
+  el.innerHTML = '';
+  PROGRAM.forEach((day,i)=>{
+    const p = dayPct(curWeek,i);
+    const log = DATA.days[dkey(curWeek,i)];
+    const total = log ? log.ex.length + (log.extra||[]).length : day.ex.length;
+    const skipped = isSkipped(curWeek,i);
+    const manualSkip = log && log.skipped;
+    const div = document.createElement('div');
+    div.className = 'dt' + (i===curDay?' sel':'');
+    const chk = manualSkip ? '<span class="missx">✕</span>' : (p>=1 ? '✓✓' : (p>0 ? Math.round(p*total)+'/'+total : (skipped ? '<span class="missx">✕</span>' : '')));
+    div.innerHTML = '<div class="t">'+day.short+'</div><div class="s">Ziua '+(i+1)+'</div><div class="chk">'+chk+'</div>';
+    div.onclick = ()=>{ curDay = i; DATA.cur = {w:curWeek, d:curDay}; scheduleSave(); refreshDay(); window.scrollTo({top:0}); };
+    el.appendChild(div);
+  });
+}
+
+/* ================= RENDER: EXERCISES ================= */
+function renderDay(){
+  const day = PROGRAM[curDay];
+  document.getElementById('dayName').textContent = 'Săpt. '+curWeek+' — '+day.name;
+  document.getElementById('dayFocus').textContent = day.focus;
+  document.getElementById('deloadBanner').style.display = DELOAD.includes(curWeek) ? 'block' : 'none';
+  document.getElementById('preDeloadBanner').style.display = (!DELOAD.includes(curWeek) && DELOAD.includes(curWeek+1)) ? 'block' : 'none';
+
+  const log = getLog(curWeek, curDay);
+  const list = document.getElementById('exList');
+  list.innerHTML = '';
+
+  function buildCard(exDef, entry, kind, i, replaced){
+    const card = document.createElement('div');
+    card.className = 'ex' + (entry.done?' done':'');
+    const slotDef = kind==='main' ? day.ex[i] : null;
+    const isDL = DELOAD.includes(curWeek);
+
+    /* Fiecare exercițiu (după numele lui exact) își ia referința și sugestia
+       DOAR din propriile logări — niciodată de la alt exercițiu care a ocupat slotul. */
+    const perf = lastPerformanceOf(exDef.n, curWeek, curDay);
+    const pv = perf ? perf.entry.sets : [];
+
+    let setsHtml = '';
+    entry.sets.forEach((s,j)=>{
+      const canDel = entry.sets.length > 1;
+      const ph = (pv[j] && pv[j].w!=='' && pv[j].w!=null) ? String(pv[j].w) : 'kg';
+      const phr = (pv[j] && pv[j].r!=='' && pv[j].r!=null) ? String(pv[j].r) : 'rep';
+      setsHtml += '<div class="setrow'+(canDel?' deletable':'')+'">'
+        + '<div class="setlabel">Set '+(j+1)+'</div>'
+        + '<input inputmode="decimal" placeholder="'+esc(ph)+'" value="'+esc(s.w)+'" data-kind="'+kind+'" data-ex="'+i+'" data-set="'+j+'" data-f="w">'
+        + '<input inputmode="numeric" placeholder="'+esc(phr)+'" value="'+esc(s.r)+'" data-kind="'+kind+'" data-ex="'+i+'" data-set="'+j+'" data-f="r">'
+        + (canDel ? '<button class="setdel" data-del-kind="'+kind+'" data-del-i="'+i+'" data-del-set="'+j+'" aria-label="Șterge setul">✕</button>' : '')
+        + '</div>';
+    });
+    setsHtml += '<button class="addset" data-addset-kind="'+kind+'" data-addset-i="'+i+'">+ Adaugă set</button>';
+
+    let lastHtml = '';
+    if(perf){
+      let suggHtml = '';
+      if(isDL){
+        const dl = deloadSuggest(perf.entry, exDef);
+        if(dl) suggHtml = '<br>Deload azi: <span class="sugg">'+dl+'</span>';
+      } else {
+        const sg = suggestToday(perf.entry, exDef);
+        if(sg) suggHtml = '<br>Sugestie azi: <span class="sugg">'+sg.txt+'</span>';
+      }
+      const refLabel = (perf.w === curWeek-1 && perf.d === curDay)
+        ? 'Săpt. trecută'
+        : 'Ultima dată la acest exercițiu (S'+perf.w+' · '+PROGRAM[perf.d].short+')';
+      const rirTxt = (perf.entry.rir===0||perf.entry.rir) ? ' · RIR '+(perf.entry.rir>=3?'3+':perf.entry.rir) : '';
+      lastHtml = '<div class="lastweek">'+refLabel+': <b>'+fmtSets(perf.entry)+'</b>'+rirTxt+suggHtml+'</div>';
+    } else if(replaced || kind==='extra'){
+      lastHtml = '<div class="lastweek">Prima dată la acest exercițiu — seturile de azi devin linia de bază</div>';
+    } else if(curWeek>1){
+      lastHtml = '<div class="lastweek">Ultima dată: <i>nelogat încă acest exercițiu</i></div>';
+    }
+    if(kind==='main'){
+      const hasAlts = (REPLACEMENTS[curDay+'-'+i]||[]).length > 0;
+      let ctl = '';
+      if(replaced) ctl += 'înlocuit pt. săpt. '+curWeek+' <span class="rmx" data-unrepl="'+i+'">↩ înapoi la original</span>';
+      if(hasAlts) ctl += (ctl?' · ':'') + '<span class="rmx" style="color:var(--amber)" data-repl="'+i+'">⇄ înlocuiește</span>';
+      if(ctl) lastHtml += '<div class="lastweek">'+ctl+'</div>';
+    }
+    if(kind==='extra'){
+      lastHtml += '<div class="lastweek">adăugat doar pentru săpt. '+curWeek+' <span class="rmx" data-rmextra="'+i+'">✕ elimină</span></div>';
+    }
+
+    const tip = exDef.tip || '';
+    const rest = restFor(exDef, slotDef);
+    const rirHtml = '<div class="rir"><span>RIR ultimul set</span>'
+      + [0,1,2,3].map(r=>'<button data-rir-kind="'+kind+'" data-rir-i="'+i+'" data-rir="'+r+'" class="'+(entry.rir===r?'on':'')+'">'+(r===3?'3+':r)+'</button>').join('')
+      + '</div>';
+    const exfHtml = '<div class="exf">'
+      + '<button data-rest="'+rest+'">Pauză '+fmtRest(rest)+'</button>'
+      + (tip ? '<button data-tip="1">Tehnică</button>' : '')
+      + (kind==='main' ? '<button data-histbtn="'+i+'">Istoric</button>' : '')
+      + '</div>';
+
+    const histAttr = kind==='main' ? ' data-hist="'+i+'"' : '';
+    card.innerHTML =
+      '<div class="exhead">'
+      + '<div class="exnum">'+(kind==='extra' ? '+' : (i+1))+'</div>'
+      + '<div class="exinfo"'+histAttr+'>'
+      +   '<div class="exname">'+exDef.n+(replaced?' <span style="color:var(--amber);font-size:11px">⇄</span>':'')+'</div>'
+      +   '<div class="extarget">'+exDef.t+(isDL?' → ½ seturi, RIR 4':'')+'</div>'
+      +   (exDef.note?'<div class="exnote">'+exDef.note+'</div>':'')
+      +   (kind==='main' ? '<div class="hist-hint">atinge numele pt. istoric ↗</div>' : '')
+      + '</div>'
+      + '<button class="check" data-chk-kind="'+kind+'" data-chk-i="'+i+'" aria-label="Bifează exercițiul">✓</button>'
+      + '</div>'
+      + (tip ? '<div class="tech">'+tip+'</div>' : '')
+      + '<div class="sets">'+setsHtml+'</div>'
+      + rirHtml
+      + lastHtml
+      + exfHtml;
+    card.dataset.rest = rest;
+    return card;
+  }
+
+  day.ex.forEach((exDef,i)=>{
+    const rep = log.repl && log.repl[i];
+    list.appendChild(buildCard(rep || exDef, log.ex[i], 'main', i, !!rep));
+  });
+  (log.extra||[]).forEach((exDef,i)=> list.appendChild(buildCard(exDef, exDef, 'extra', i)));
+
+  const addExBtn = document.createElement('button');
+  addExBtn.className = 'addex';
+  addExBtn.textContent = '+ Adaugă exercițiu ('+CATEGORY_NAME[categoryOf(curDay)]+')';
+  addExBtn.onclick = openAddExercise;
+  list.appendChild(addExBtn);
+
+  list.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const {kind, ex, set, f} = e.target.dataset;
+      const arr = kind==='extra' ? getLog(curWeek,curDay).extra : getLog(curWeek,curDay).ex;
+      arr[ex].sets[set][f] = e.target.value;
+      scheduleSave();
+      scheduleAdvance(e.target);
+      updateFoot();
+    });
+    if(inp.dataset.f === 'r'){
+      inp.addEventListener('change', e=>{ if(e.target.value !== '') startRestTimer(+e.target.closest('.ex').dataset.rest || 120); });
+    }
+  });
+  list.querySelectorAll('[data-chk-kind]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const kind = e.currentTarget.dataset.chkKind, i = +e.currentTarget.dataset.chkI;
+      const arr = kind==='extra' ? getLog(curWeek,curDay).extra : getLog(curWeek,curDay).ex;
+      const entry = arr[i];
+      entry.done = !entry.done;
+      e.currentTarget.closest('.ex').classList.toggle('done', entry.done);
+      updateFoot();
+      scheduleSave();
+    });
+  });
+  list.querySelectorAll('[data-hist]').forEach(el=>{
+    el.addEventListener('click', e=>openHistory(+e.currentTarget.dataset.hist));
+  });
+  list.querySelectorAll('[data-histbtn]').forEach(el=>{
+    el.addEventListener('click', e=>openHistory(+e.currentTarget.dataset.histbtn));
+  });
+  list.querySelectorAll('[data-rir-kind]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const b = e.currentTarget, kind = b.dataset.rirKind, i = +b.dataset.rirI, r = +b.dataset.rir;
+      const arr = kind==='extra' ? getLog(curWeek,curDay).extra : getLog(curWeek,curDay).ex;
+      arr[i].rir = arr[i].rir===r ? null : r;
+      b.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('on', +x.dataset.rir===arr[i].rir));
+      scheduleSave();
+    });
+  });
+  list.querySelectorAll('[data-rest]').forEach(btn=>{
+    btn.addEventListener('click', e=>startRestTimer(+e.currentTarget.dataset.rest));
+  });
+  list.querySelectorAll('[data-tip]').forEach(btn=>{
+    btn.addEventListener('click', e=>e.currentTarget.closest('.ex').classList.toggle('tipopen'));
+  });
+  list.querySelectorAll('[data-addset-kind]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const kind = e.currentTarget.dataset.addsetKind, i = +e.currentTarget.dataset.addsetI;
+      const arr = kind==='extra' ? getLog(curWeek,curDay).extra : getLog(curWeek,curDay).ex;
+      arr[i].sets.push({w:'',r:''});
+      scheduleSave();
+      renderDay();
+    });
+  });
+  list.querySelectorAll('[data-del-kind]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const kind = e.currentTarget.dataset.delKind, i = +e.currentTarget.dataset.delI, j = +e.currentTarget.dataset.delSet;
+      const arr = kind==='extra' ? getLog(curWeek,curDay).extra : getLog(curWeek,curDay).ex;
+      if(!arr[i] || arr[i].sets.length <= 1) return; // rămâne mereu minim o serie
+      const s = arr[i].sets[j];
+      const hasData = s && ((s.w!=='' && s.w!=null) || (s.r!=='' && s.r!=null));
+      if(hasData && !confirm('Seria '+(j+1)+' are date ('+(s.w||'?')+'kg×'+(s.r||'?')+'). O ștergi definitiv?')) return;
+      arr[i].sets.splice(j,1);
+      scheduleSave();
+      renderDay();
+    });
+  });
+  list.querySelectorAll('[data-rmextra]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      const i = +e.currentTarget.dataset.rmextra;
+      getLog(curWeek,curDay).extra.splice(i,1);
+      scheduleSave();
+      renderDay();
+    });
+  });
+  list.querySelectorAll('[data-repl]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      openReplace(+e.currentTarget.dataset.repl);
+    });
+  });
+  list.querySelectorAll('[data-unrepl]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      const i = +e.currentTarget.dataset.unrepl;
+      delete getLog(curWeek,curDay).repl[i];
+      scheduleSave();
+      renderDay();
+    });
+  });
+
+  document.getElementById('dayNote').value = log.note || '';
+
+  const skipBtn = document.getElementById('skipDayBtn');
+  if(log.skipped){
+    skipBtn.textContent = '↩ Zi marcată ca NEFĂCUTĂ — atinge pt. a anula';
+    skipBtn.style.borderColor = 'var(--red)';
+    skipBtn.style.color = 'var(--red)';
+  } else {
+    skipBtn.textContent = '✕ Marchează ziua ca nefăcută';
+    skipBtn.style.borderColor = '';
+    skipBtn.style.color = '';
+  }
+
+  updateFoot();
+}
+function toggleSkipDay(){
+  const log = getLog(curWeek,curDay);
+  if(!log.skipped && hasEntries(curWeek,curDay)){
+    if(!confirm('Această zi are deja seturi logate. Sigur o marchezi ca nefăcută? (datele rămân salvate)')) return;
+  }
+  log.skipped = !log.skipped;
+  scheduleSave();
+  refreshAll();
+}
+
+/* ================= ÎNLOCUIEȘTE EXERCIȚIU (doar pentru săptămâna curentă) ================= */
+function openReplace(exIdx){
+  const opts = REPLACEMENTS[curDay+'-'+exIdx] || [];
+  if(!opts.length){ flash('Nicio alternativă definită pentru acest exercițiu','err'); return; }
+  const orig = PROGRAM[curDay].ex[exIdx];
+  document.getElementById('addExTitle').textContent = 'Înlocuiește: '+orig.n;
+  document.getElementById('addExSub').textContent = '';
+  const body = document.getElementById('addExBody');
+  body.innerHTML =
+    '<div class="msub" style="margin-bottom:8px">Aceeași grupă musculară, alt aparat/metodă — valabil doar pentru săpt. '+curWeek+'. Datele deja logate în seturi rămân.</div>'
+    + opts.map((o,idx)=>
+      '<div class="addexopt" data-pickrepl="'+idx+'"><div class="exname">'+o.n+'</div><div class="extarget">'+o.t+'</div></div>'
+    ).join('');
+  body.querySelectorAll('[data-pickrepl]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      const o = opts[+e.currentTarget.dataset.pickrepl];
+      const log = getLog(curWeek,curDay);
+      log.repl[exIdx] = { n:o.n, t:o.t, sets:o.sets };
+      while(log.ex[exIdx].sets.length < o.sets) log.ex[exIdx].sets.push({w:'',r:''});
+      document.getElementById('addExBg').classList.remove('open');
+      scheduleSave();
+      renderDay();
+    });
+  });
+  document.getElementById('addExBg').classList.add('open');
+}
+function updateFoot(){
+  const log = getLog(curWeek,curDay);
+  const all = log.ex.concat(log.extra||[]);
+  const done = all.filter(e=>e.done).length;
+  const vol = dayVolume(curWeek,curDay);
+  document.getElementById('footLabel').textContent = done+'/'+all.length+' ex'+(vol>0?' · '+fmtVol(vol):'');
+  document.getElementById('footBar').style.width = (done/all.length*100)+'%';
+}
+
+/* ================= TIMER DE PAUZĂ ================= */
+let restIv = null, restLeft = 0;
+function beep(){
+  try{ const c=new (window.AudioContext||window.webkitAudioContext)(); const o=c.createOscillator(); const g=c.createGain();
+    o.connect(g); g.connect(c.destination); o.frequency.value=880; g.gain.value=.15; o.start(); o.stop(c.currentTime+.35); }catch(e){}
+}
+function startRestTimer(sec){
+  stopRestTimer(true);
+  restLeft = sec || 120;
+  const el = document.getElementById('restTimer');
+  el.classList.add('on'); el.classList.remove('zero');
+  paintTimer();
+  restIv = setInterval(()=>{
+    restLeft--;
+    paintTimer();
+    if(restLeft <= 0){
+      el.classList.add('zero');
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+      beep();
+      clearInterval(restIv); restIv = null;
+      setTimeout(()=>{ el.classList.remove('on'); }, 6000);
+    }
+  }, 1000);
+}
+function paintTimer(){
+  const el = document.getElementById('restTimer');
+  const m = Math.max(0, Math.floor(restLeft/60)), s = Math.max(0, restLeft%60);
+  el.innerHTML = (restLeft<=0 ? 'PAUZĂ GATA' : m+':'+String(s).padStart(2,'0'))
+    + '<div class="tsub">'+(restLeft<=0 ? 'atinge pt. a închide' : 'pauză · atinge pt. a opri')+'</div>';
+}
+function stopRestTimer(silent){
+  if(restIv){ clearInterval(restIv); restIv = null; }
+  if(silent !== true) document.getElementById('restTimer').classList.remove('on');
+}
+
+/* ================= REZUMAT SĂPTĂMÂNAL ================= */
+function openWeekSummary(){
+  document.getElementById('mTitle').textContent = 'Rezumat — Săpt. '+curWeek;
+  const body = document.getElementById('mBody');
+  document.getElementById('modalBg').classList.add('open');
+
+  let totalVol = 0, rows = [];
+  PROGRAM.forEach((day,d)=>{
+    const v = dayVolume(curWeek,d);
+    totalVol += v;
+    const p = dayPct(curWeek,d);
+    const lg = DATA.days[dkey(curWeek,d)];
+    rows.push('<div class="hrow"><div class="hw">'+day.short+'</div><div class="hd">'
+      + ((lg && lg.skipped) ? '<span style="color:var(--red)">✕ marcată nefăcută</span>'
+        : (hasEntries(curWeek,d) ? fmtVol(v)+' · '+Math.round(p*100)+'% bifat' : '<i style="color:var(--muted)">nelogată</i>'))
+      + '</div></div>');
+  });
+
+  let beat = [], stag = [], reg = [];
+  const refUsed = new Set();
+  if(curWeek>1){
+    PROGRAM.forEach((day,d)=>{
+      if(!hasEntries(curWeek,d)) return;
+      const rw = refWeekFor(d, curWeek);
+      if(!rw) return;
+      refUsed.add(rw);
+      const cur = getLog(curWeek,d), prev = getLog(rw,d);
+      day.ex.forEach((exDef,i)=>{
+        const bc = bestSetW(cur.ex[i]), bp = bestSetW(prev.ex[i]);
+        if(bc<=0 || bp<=0) return;
+        const label = day.short+' · '+exDef.n.split('(')[0].split(',')[0].trim();
+        if(bc>bp) beat.push(label); else if(bc===bp) stag.push(label); else reg.push(label);
+      });
+    });
+  }
+
+  let compHtml = '';
+  if(curWeek>1){
+    compHtml = '<div style="margin-top:12px;font-size:13px;line-height:1.7">'
+      + '<div><span class="arrow">▲ Bătute (greutate ↑):</span> '+(beat.length? beat.length+' — '+beat.slice(0,5).join(' · ')+(beat.length>5?' …':'') : '0')+'</div>'
+      + '<div><span style="color:var(--amber)">▶ Stagnate:</span> '+(stag.length? stag.length+' — '+stag.slice(0,5).join(' · ')+(stag.length>5?' …':'') : '0')+'</div>'
+      + '<div><span style="color:var(--red)">▼ Regres:</span> '+(reg.length? reg.length+' — '+reg.slice(0,5).join(' · ')+(reg.length>5?' …':'') : '0')+'</div>'
+      + '<div style="color:var(--muted);font-size:11px;margin-top:6px">comparat cu ultima săpt. logată pt. fiecare zi'+(refUsed.size?' (S'+[...refUsed].sort((a,b)=>a-b).join(', S')+')':'')+', pe cel mai greu set / exercițiu — fără deload</div>'
+      + '</div>';
+  }
+
+  body.innerHTML =
+    '<div style="font-family:Oswald,sans-serif;font-size:22px;color:var(--amber);margin-bottom:8px">'+fmtVol(totalVol)+' <span style="font-size:12px;color:var(--muted)">volum total săpt.</span></div>'
+    + rows.join('') + compHtml;
+}
+
+/* ================= ADAUGĂ EXERCIȚIU (doar pentru săptămâna curentă) ================= */
+function openAddExercise(){
+  const cat = categoryOf(curDay);
+  const opts = EXTRA_EXERCISES[cat];
+  document.getElementById('addExTitle').textContent = 'Adaugă exercițiu — '+CATEGORY_NAME[cat]+' (doar săpt. '+curWeek+')';
+  document.getElementById('addExSub').textContent = 'Atinge un exercițiu ca să-l adaugi la ziua de azi';
+  const body = document.getElementById('addExBody');
+  body.innerHTML = opts.map((o,idx)=>
+    '<div class="addexopt" data-pick="'+idx+'"><div class="exname">'+o.n+'</div><div class="extarget">'+o.t+'</div></div>'
+  ).join('');
+  body.querySelectorAll('[data-pick]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      const o = opts[+e.currentTarget.dataset.pick];
+      const log = getLog(curWeek,curDay);
+      log.extra = log.extra || [];
+      log.extra.push({ n:o.n, t:o.t, m:o.m||null, done:false, rir:null, sets:Array.from({length:o.sets},()=>({w:'',r:''})) });
+      document.getElementById('addExBg').classList.remove('open');
+      scheduleSave();
+      renderDay();
+    });
+  });
+  document.getElementById('addExBg').classList.add('open');
+}
+document.getElementById('addExBg').addEventListener('click', e=>{ if(e.target.id==='addExBg') e.target.classList.remove('open'); });
+
+/* ================= HISTORY MODAL ================= */
+function openHistory(exIdx){
+  const day = PROGRAM[curDay];
+  const norm = s => String(s).trim().toLowerCase();
+  const curLog = getLog(curWeek,curDay);
+  const activeName = (curLog.repl && curLog.repl[exIdx]) ? curLog.repl[exIdx].n : day.ex[exIdx].n;
+  document.getElementById('mTitle').textContent = activeName;
+  document.getElementById('mSub').textContent = 'Istoric — seturile logate pe săptămână';
+  const body = document.getElementById('mBody');
+  document.getElementById('modalBg').classList.add('open');
+
+  const rows = [];
+  const series = [];
+  let prevBest = null, allTimeMax = 0;
+  for(let w=1; w<=WEEKS; w++){
+    if(!DATA.days[dkey(w,curDay)]) continue;
+    const log = getLog(w,curDay);
+    /* doar săptămânile în care EXACT acest exercițiu era în slot */
+    const nameAt = (log.repl && log.repl[exIdx]) ? log.repl[exIdx].n : day.ex[exIdx].n;
+    if(norm(nameAt) !== norm(activeName)) continue;
+    const str = fmtSets(log.ex[exIdx]);
+    if(!str) continue;
+    const b = bestSet(log.ex[exIdx]);
+    let arrow = '', pr = '';
+    if(b){
+      if(b.w > allTimeMax){ if(allTimeMax > 0) pr = ' <span class="pr">★ PR</span>'; allTimeMax = b.w; }
+      if(prevBest !== null) arrow = b.w>prevBest ? ' <span class="arrow">▲</span>' : (b.w<prevBest?' <span style="color:var(--red)">▼</span>':'');
+      prevBest = b.w;
+      series.push({w, v:b.w});
+    }
+    rows.push('<div class="hrow"><div class="hw">S'+w+(DELOAD.includes(w)?' <span style="color:var(--muted);font-size:10px">DL</span>':'')+'</div><div class="hd">'+str+arrow+pr+'</div></div>');
+  }
+
+  let chart = '';
+  if(series.length >= 2){
+    const W = 300, H = 56, pad = 6;
+    const vs = series.map(p=>p.v);
+    const vmin = Math.min(...vs), vmax = Math.max(...vs);
+    const span = (vmax - vmin) || 1;
+    const pts = series.map((p,i)=>{
+      const x = pad + i*(W-2*pad)/(series.length-1);
+      const y = H - pad - (p.v - vmin)*(H-2*pad)/span;
+      return x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    const lastPt = pts.split(' ').pop().split(',');
+    chart = '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+      + '<polyline points="'+pts+'" fill="none" stroke="var(--amber)" stroke-width="2"/>'
+      + '<circle cx="'+lastPt[0]+'" cy="'+lastPt[1]+'" r="3" fill="var(--green)"/>'
+      + '</svg>'
+      + '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin:-6px 0 8px"><span>'+String(vmin).replace('.',',')+' kg</span><span>'+String(vmax).replace('.',',')+' kg</span></div>';
+  }
+
+  body.innerHTML = rows.length ? chart + rows.join('') : '<div class="hempty">Niciun set logat încă la acest exercițiu. Prima intrare devine linia ta de bază.</div>';
+}
+function closeModal(){ document.getElementById('modalBg').classList.remove('open'); }
+document.getElementById('modalBg').addEventListener('click', e=>{ if(e.target.id==='modalBg') closeModal(); });
+
+/* ================= BACKUP ================= */
+function countLogged(){
+  let n=0; Object.keys(DATA.days).forEach(k=>{ const lg=DATA.days[k]; if(!lg||!lg.ex) return;
+    lg.ex.concat(lg.extra||[]).forEach(e=>{ if(e.sets && e.sets.some(s=>s.w!==''&&s.w!=null)) n++; }); });
+  return n;
+}
+function daysSince(iso){ return iso ? Math.floor((Date.now()-new Date(iso).getTime())/86400000) : null; }
+function openBackup(){
+  flushSave();
+  document.getElementById('backupTxt').value = JSON.stringify(DATA);
+  const ds = daysSince(DATA.lastExport);
+  document.getElementById('backupInfo').innerHTML =
+    countLogged()+' exerciții logate · salvat pe acest telefon'
+    + (DATA.updated ? ' · ultima salvare '+new Date(DATA.updated).toLocaleString('ro-RO') : '')
+    + '<br>Ultimul backup exportat: <b>'+(ds===null ? 'niciodată' : (ds===0 ? 'azi' : 'acum '+ds+' zile'))+'</b>';
+  document.getElementById('backupBg').classList.add('open');
+}
+async function exportJson(){
+  flushSave();
+  const txt = JSON.stringify(DATA, null, 1);
+  const name = 'ppl_florin_backup_'+new Date().toISOString().slice(0,10)+'.json';
+  const blob = new Blob([txt], {type:'application/json'});
+  let ok = false;
+  try{
+    const file = new File([blob], name, {type:'application/json'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:name}); ok = true;
+    }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  if(!ok){
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); ok = true;
+  }
+  DATA.lastExport = new Date().toISOString(); saveNow(); openBackup();
+  flash('Backup exportat ✓ — păstrează fișierul în Drive','saved');
+}
+function applyImport(txt){
+  const parsed = JSON.parse(txt);
+  if(!parsed || typeof parsed.days !== 'object') throw new Error('nu e un backup al acestui jurnal');
+  if(!confirm('Înlocuiești datele de acum cu cele din backup?')) return false;
+  DATA = parsed; applySeed(); syncDeload();
+  saveNow();
+  document.getElementById('backupBg').classList.remove('open');
+  refreshAll(true);
+  flash('Backup importat ✓','saved');
+  return true;
+}
+function copyBackup(){
+  const ta = document.getElementById('backupTxt');
+  ta.select(); ta.setSelectionRange(0, 9999999);
+  const done = ()=>{ DATA.lastExport = new Date().toISOString(); saveNow(); flash('Copiat ✓ — lipește-l în Notes','saved'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(done).catch(()=>{ try{ document.execCommand('copy'); done(); }catch(e){ flash('Selectează manual textul și copiază-l','err'); } });
+  } else { try{ document.execCommand('copy'); done(); }catch(e){ flash('Selectează manual textul și copiază-l','err'); } }
+}
+function importBackup(){
+  try{ applyImport(document.getElementById('backupTxt').value); }
+  catch(e){ flash('Import eșuat: '+e.message,'err'); }
+}
+document.getElementById('importFile').addEventListener('change', ev=>{
+  const f = ev.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ try{ applyImport(r.result); }catch(e){ flash('Import eșuat: '+e.message,'err'); } ev.target.value=''; };
+  r.readAsText(f);
+});
+document.getElementById('backupBg').addEventListener('click', e=>{ if(e.target.id==='backupBg') e.target.classList.remove('open'); });
+function updateBackupReminder(){
+  const el = document.getElementById('backupRemind');
+  const ds = daysSince(DATA.lastExport);
+  if(countLogged() >= 6 && (ds===null || ds>=14)){
+    el.innerHTML = '<b>BACKUP</b> — '+(ds===null ? 'nu ai exportat încă niciun backup' : 'ultimul backup e de acum '+ds+' zile')
+      + '. Atinge aici → Exportă fișier și pune-l în Drive. Durează 10 secunde.';
+    el.style.display = 'block';
+  } else el.style.display = 'none';
+}
+
+/* ================= PROGRES ================= */
+const MUSCLES = [['piept','Piept'],['umeri','Umeri'],['brate','Brațe'],['spate','Spate'],['cvadriceps','Cvadriceps'],['posterior','Posterior']];
+const num = v => { const x = parseFloat(String(v).replace(',','.')); return isNaN(x) ? 0 : x; };
+const e1rm = (kg,r) => kg>0 && r>0 ? kg*(1+r/30) : 0;
+function muscleOf(name, slotM){
+  if(slotM) return slotM;
+  for(const cat in EXTRA_EXERCISES){ const x = EXTRA_EXERCISES[cat].find(o=>o.n===name); if(x && x.m) return x.m; }
+  return 'acc';
+}
+/* toate aparițiile fiecărui exercițiu, după nume (original, înlocuitor sau adăugat) */
+function perfIndex(){
+  const idx = {};
+  for(let w=1; w<=WEEKS; w++) for(let d=0; d<6; d++){
+    if(!DATA.days[dkey(w,d)]) continue;
+    const log = getLog(w,d);
+    PROGRAM[d].ex.forEach((e,i)=>{
+      const rp = log.repl && log.repl[i];
+      const name = rp ? rp.n : e.n, t = rp ? rp.t : e.t;
+      (idx[name] = idx[name] || {name, m:e.m, t, first:i===0, days:new Set(), recs:[]}).recs.push({w,d,entry:log.ex[i]});
+      idx[name].days.add(d); if(i===0 && !rp) idx[name].first = true;
+    });
+    (log.extra||[]).forEach(x=>{
+      (idx[x.n] = idx[x.n] || {name:x.n, m:muscleOf(x.n, x.m), t:x.t, first:false, days:new Set(), recs:[]}).recs.push({w,d,entry:x});
+      idx[x.n].days.add(d);
+    });
+  }
+  return Object.values(idx);
+}
+function seriesOf(p){
+  const byW = {};
+  p.recs.forEach(r=>{
+    if(DELOAD.includes(r.w)) return;
+    const sets = r.entry.sets.filter(s=>num(s.w)>0 && num(s.r)>0);
+    if(!sets.length) return;
+    const v = Math.max(...sets.map(s=>e1rm(num(s.w),num(s.r))));
+    const ton = sets.reduce((a,s)=>a+num(s.w)*num(s.r),0);
+    if(!byW[r.w] || v>byW[r.w].v) byW[r.w] = {w:r.w, v, ton, sets, rir:r.entry.rir};
+  });
+  return Object.values(byW).sort((a,b)=>a.w-b.w);
+}
+function trendOf(ser){ if(ser.length<2) return null; const l = ser.slice(-4); return (l[l.length-1].v - l[0].v)/l[0].v; }
+function statusOf(ser){
+  if(ser.length<2) return 'none';
+  const l = ser.slice(-3).map(x=>x.v);
+  if(l[l.length-1] > l[0]*1.01) return 'up';
+  if(l[l.length-1] < l[0]*0.99) return 'down';
+  return ser.length>=3 ? 'stag' : 'flat';
+}
+const score = t => t==null ? null : Math.max(0, Math.min(100, Math.round(50 + t*500)));
+function weekTon(w){ let t=0; for(let d=0; d<6; d++) t += dayVolume(w,d); return t; }
+function analyze(){
+  const per = perfIndex().map(p=>{ const ser = seriesOf(p); const rr = parseRepRange(p.t);
+    return Object.assign(p, {ser, tr:trendOf(ser), st:statusOf(ser), rng: rr ? [rr.min, rr.max] : [8,12]}); });
+  const muscles = MUSCLES.map(([k,l])=>{ const xs = per.filter(p=>p.m===k && p.tr!=null);
+    return {k, l, s: xs.length ? Math.round(xs.reduce((a,p)=>a+score(p.tr),0)/xs.length) : null}; });
+  const weeks = []; for(let w=1; w<=WEEKS; w++){ const t = weekTon(w); if(t>0) weeks.push({w, t, deload:DELOAD.includes(w)}); }
+  const lastW = weeks.length ? weeks[weeks.length-1].w : 0;
+  // consistență: ultimele 4 săptămâni normale până la lastW
+  let planned=0, done=0;
+  if(lastW){
+    const win = []; for(let w=lastW; w>=1 && win.length<4; w--) if(!DELOAD.includes(w)) win.push(w);
+    win.forEach(w=>{ for(let d=0; d<6; d++){
+      if(w===lastW && (lastEntryPos()||{}).w===lastW && d>(lastEntryPos()||{d:5}).d) continue;
+      planned++; if(hasEntries(w,d) && !(DATA.days[dkey(w,d)]||{}).skipped) done++; } });
+  }
+  const consist = planned ? Math.round(done/planned*100) : null;
+  const rirs = []; per.forEach(p=>p.recs.forEach(r=>{ if(!DELOAD.includes(r.w) && (r.entry.rir===0||r.entry.rir)) rirs.push({w:r.w, r:r.entry.rir}); }));
+  const logged = per.flatMap(p=>p.ser.flatMap(s=>s.sets.map(x=>[x,p.rng])));
+  const intens = rirs.length>=6 ? Math.round(rirs.filter(x=>x.r<=2).length/rirs.length*100)
+    : (logged.length ? Math.round(logged.filter(([s,r])=>num(s.r)>=r[0]).length/logged.length*100) : null);
+  const withTr = per.filter(p=>p.st!=='none');
+  const progresie = withTr.length ? Math.round(withTr.filter(p=>p.st==='up').length/withTr.length*100) : null;
+  const comp = per.filter(p=>p.first && p.tr!=null);
+  const forta = comp.length ? Math.round(comp.reduce((a,p)=>a+score(p.tr),0)/comp.length) : null;
+  // volum = trendul tonajului pe fiecare exercițiu în parte (aceleași exerciții comparate între ele), apoi media
+  const tonTr = per.map(p=>{ const l=p.ser.slice(-4); return l.length>=2 && l[0].ton>0 ? (l[l.length-1].ton-l[0].ton)/l[0].ton : null; }).filter(x=>x!=null);
+  const volum = tonTr.length ? Math.round(tonTr.reduce((a,t)=>a+score(t/2),0)/tonTr.length) : null;
+  const shares=[0,0,0]; if(lastW){ [lastW, lastW-1].forEach(w=>{ if(w>=1 && !DELOAD.includes(w)) for(let d=0; d<6; d++) shares[d%3] += dayVolume(w,d); }); }
+  const echilibru = Math.max(...shares)>0 ? Math.round(Math.min(...shares)/Math.max(...shares)*100) : null;
+  const fatigue = [];
+  const dn = per.filter(p=>p.st==='down'); if(dn.length>=4) fatigue.push(dn.length+' exerciții în regres');
+  const lr = rirs.filter(x=>x.w===lastW);
+  if(lr.length>=4 && lr.filter(x=>x.r===0).length/lr.length>.5 && withTr.length && withTr.filter(p=>p.st==='up').length/withTr.length<.4) fatigue.push('RIR 0 des, fără progres');
+  const profile = [['Forță',forta],['Volum',volum],['Consistență',consist],['Intensitate',intens],['Progresie',progresie],['Echilibru',echilibru]];
+  return {per, muscles, weeks, lastW, profile, fatigue};
+}
+function radar(axes, size){
+  size = size||300; const c=size/2, r=size/2-44, n=axes.length;
+  const pt=(i,v)=>{ const a=-Math.PI/2+i*2*Math.PI/n; return [c+Math.cos(a)*r*v, c+Math.sin(a)*r*v]; };
+  let g='';
+  [.25,.5,.75,1].forEach(v=>{ g+='<polygon points="'+axes.map((_,i)=>pt(i,v).join(',')).join(' ')+'" fill="none" stroke="var(--line)" stroke-width="1"/>'; });
+  axes.forEach((_,i)=>{ const [x,y]=pt(i,1); g+='<line x1="'+c+'" y1="'+c+'" x2="'+x+'" y2="'+y+'" stroke="var(--line)"/>'; });
+  const has = axes.some(a=>a[1]!=null);
+  if(has) g+='<polygon points="'+axes.map((a,i)=>pt(i,(a[1]==null?0:a[1])/100).join(',')).join(' ')+'" fill="rgba(242,169,59,.25)" stroke="var(--amber)" stroke-width="2" stroke-linejoin="round"/>';
+  axes.forEach((a,i)=>{ const [x,y]=pt(i,1.24); const v=a[1];
+    const col = v==null ? 'var(--muted)' : v>=60 ? 'var(--green)' : v<=40 ? 'var(--red)' : 'var(--amber)';
+    g+='<text x="'+x+'" y="'+y+'" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="600" fill="var(--text)">'+a[0]+'</text>'
+      +'<text x="'+x+'" y="'+(y+14)+'" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="'+col+'">'+(v==null?'–':v)+'</text>';
+    if(has && v!=null){ const [px,py]=pt(i,v/100); g+='<circle cx="'+px+'" cy="'+py+'" r="4" fill="var(--amber)"/>'; } });
+  return '<svg viewBox="0 0 '+size+' '+size+'" width="100%" style="max-width:340px;display:block;margin:0 auto">'+g+'</svg>';
+}
+function tonBars(weeks){
+  if(!weeks.length) return '';
+  const W=340, H=130, pad=10, slot=(W-pad*2)/weeks.length, bw=Math.min(26, slot-4), max=Math.max(...weeks.map(x=>x.t));
+  let g='';
+  weeks.forEach((x,i)=>{ const h=x.t/max*(H-34); const px=pad+i*slot+(slot-bw)/2;
+    g+='<rect x="'+px+'" y="'+(H-14-h)+'" width="'+bw+'" height="'+h+'" rx="3" fill="'+(x.deload?'#5aa7d6':'var(--amber)')+'"/>'
+      +'<text x="'+(px+bw/2)+'" y="'+(H-2)+'" font-size="10" text-anchor="middle" fill="var(--muted)">S'+x.w+'</text>'
+      +'<text x="'+(px+bw/2)+'" y="'+(H-18-h)+'" font-size="9" text-anchor="middle" fill="var(--muted)">'+(x.t/1000).toFixed(1)+'t</text>'; });
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">'+g+'</svg>';
+}
+const STL = {up:['▲','progresezi','var(--green)'], down:['▼','regresezi','var(--red)'], stag:['▬','stagnezi','var(--amber)'], flat:['▬','stabil','var(--muted)'], none:['·','date puține','var(--muted)']};
+const shortName = n => esc(n.split(' (')[0].split(',')[0].slice(0,34));
+function renderProgress(){
+  const A = analyze(); const m = document.getElementById('viewProgress');
+  const tot = A.per.filter(p=>p.st!=='none').length, up = A.per.filter(p=>p.st==='up').length,
+        st = A.per.filter(p=>p.st==='stag').length, dn = A.per.filter(p=>p.st==='down').length;
+  const verdict = !tot ? 'Loghează cel puțin 2 săptămâni același exercițiu ca să apară comparațiile.'
+    : up+' din '+tot+' exerciții cu istoric progresează, '+st+' stagnează, '+dn+' regresează. '
+      + (up/tot>=.6 ? 'Programul funcționează, continuă.' : st>=up ? 'Multe stagnări: verifică somnul și mâncarea, apoi schimbă varianta (⇄ înlocuiește) la ce e blocat de 3 săptămâni.' : 'Progres mixt — normal, ține-te de progresia dublă.');
+  const nextDl = DELOAD.find(w=>w>A.lastW);
+  let h = '<div class="dayhead"><div class="name">Progres</div><div class="focus">'+(A.lastW?'până la săpt. '+A.lastW:'')+'</div></div>'
+    + '<div class="card"><div class="txt">'+verdict+'</div></div>'
+    + '<div class="card"><h2>Pe grupe musculare</h2><div class="cap">50 = staționar. Peste 60 crește, sub 40 scade — trendul pe ultimele 4 săptămâni logate (e1RM, cel mai bun set). Deload-urile nu intră în calcul.</div>'+radar(A.muscles.map(x=>[x.l,x.s]))+'</div>'
+    + '<div class="card"><h2>Profilul tău</h2><div class="cap">Forță = primul exercițiu al fiecărei zile. Volum = tonajul pe exercițiu (kg × rep) în creștere sau nu. Consistență = zile antrenate din ultimele 4 săpt. Intensitate = seturi la RIR ≤2 (sau în intervalul de repetări). Progresie = % exerciții în urcare. Echilibru = push / pull / legs.</div>'+radar(A.profile)+'</div>'
+    + '<div class="card"><h2>Deload</h2><div class="txt">'
+      + (nextDl ? 'Următorul deload setat: săptămâna '+nextDl+(A.lastW?' (peste '+(nextDl-A.lastW)+' săpt.)':'')+'.' : 'Niciun deload setat după săpt. '+(A.lastW||curWeek)+'.')
+      + (A.fatigue.length ? '<div style="color:var(--red);margin-top:6px">Semne de oboseală: '+A.fatigue.join(', ')+'. Ia în calcul un deload săptămâna viitoare.</div>'
+                          : '<div style="color:var(--muted);margin-top:6px">Fără semne clare de oboseală acumulată.</div>')
+      + '</div><button class="bigbtn" onclick="openDeloadPicker()">🛌 Setează săptămânile de deload</button></div>'
+    + '<div class="card"><h2>Tonaj pe săptămână</h2><div class="cap">kg × repetări, toate exercițiile. Albastru = deload.</div>'+(tonBars(A.weeks)||'<div class="hempty">Nimic logat.</div>')+'</div>';
+  if(A.lastW>1){
+    let rows='';
+    A.per.forEach(p=>{ const cur=p.ser.find(x=>x.w===A.lastW), prev=p.ser.filter(x=>x.w<A.lastW).slice(-1)[0]; if(!cur||!prev) return;
+      const dv=(cur.v-prev.v)/prev.v*100;
+      rows+='<div class="prow"><span class="pl">'+shortName(p.name)+'<small>față de S'+prev.w+'</small></span><span class="pr2" style="color:'+(dv>1?'var(--green)':dv<-1?'var(--red)':'var(--muted)')+'">'+(dv>0?'+':'')+dv.toFixed(1)+'%</span></div>'; });
+    if(rows) h+='<div class="card"><h2>Săptămâna '+A.lastW+' față de ultima dată</h2><div class="cap">Variația e1RM la cel mai bun set, pe exercițiu.</div>'+rows+'</div>';
+  }
+  const list = A.per.filter(p=>p.st!=='none').sort((a,b)=>['stag','down','flat','up'].indexOf(a.st)-['stag','down','flat','up'].indexOf(b.st));
+  if(list.length) h+='<div class="card"><h2>Exercițiu cu exercițiu</h2>'+list.map(p=>{ const s=STL[p.st]; const last=p.ser[p.ser.length-1];
+    const dn=[...p.days].map(d=>PROGRAM[d].short).join('/');
+    return '<div class="prow"><span class="pl">'+shortName(p.name)+'<small>'+dn+' · S'+last.w+': '+last.sets.map(x=>x.w+'×'+x.r).join(' ')+'</small></span><span class="pr2" style="color:'+s[2]+'">'+s[0]+' '+s[1]
+      +(p.st==='stag'?'<small style="display:block;font-weight:400;color:var(--muted)">+greutate sau ⇄ altă variantă</small>':'')+'</span></div>'; }).join('')+'</div>';
+  m.innerHTML = h;
+}
+
+/* ================= NAVIGARE ================= */
+let VIEW = 'journal';
+function showView(v){
+  VIEW = v;
+  document.getElementById('viewJournal').style.display = v==='journal' ? '' : 'none';
+  document.getElementById('viewProgress').style.display = v==='progress' ? '' : 'none';
+  document.getElementById('nvJournal').classList.toggle('on', v==='journal');
+  document.getElementById('nvProgress').classList.toggle('on', v==='progress');
+  if(v==='progress') renderProgress(); else refreshAll(true);
+  window.scrollTo(0,0);
+}
+function openProgram(){
+  document.getElementById('mTitle').textContent = 'Programul';
+  document.getElementById('mSub').textContent = 'Push / Pull / Legs × 2 pe săptămână · 24 săptămâni · deload-uri setate de tine';
+  let h='';
+  PROGRAM.forEach(d=>{ h+='<div style="margin:12px 0 2px;font-family:Oswald,sans-serif;color:var(--amber)">'+d.name+' <span style="color:var(--muted);font-family:Inter,sans-serif;font-size:12px">· '+d.focus+'</span></div>';
+    d.ex.forEach(x=>{ h+='<div class="prow"><span class="pl">'+esc(x.n)+'<small>pauză '+fmtRest(x.rest)+'</small></span><span class="pr2" style="color:var(--text)">'+x.t+'</span></div>'; }); });
+  h+='<div class="tip"><b>Progresie dublă:</b> când atingi capătul de sus al intervalului la toate seturile, crești greutatea (+2,5 kg la bară, cea mai mică treaptă la aparat/gantere) și revii la capătul de jos. Sugestia de sub fiecare exercițiu face calculul pentru tine.<br><br>'
+   +'<b>Intensitate:</b> seturile la RIR 1-2. Bifează RIR-ul ultimului set — fără el aplicația nu poate măsura cât de aproape de eșec lucrezi. În săptămâna dinaintea unui deload poți merge la RIR 0-1 la ultimul set.<br><br>'
+   +'<b>Deload:</b> jumătate din seturi, ~60% din greutate, RIR 4. Îl pui tu din 🛌, de regulă după 5-6 săptămâni grele sau mai devreme dacă Progres arată regres pe mai multe exerciții, somnul e prost sau încheieturile se plâng.<br><br>'
+   +'<b>Tehnică:</b> excentrică controlată 2-3s, amplitudine completă cu accent pe poziția de întindere. Butonul „Tehnică” de sub exercițiu are indicațiile.<br><br>'
+   +'<b>Recuperare:</b> proteine 1,6-2,2 g/kg, somn 7-9 h, surplus caloric mic (200-300 kcal) dacă vrei masă.<br><br>'
+   +'<b>Pauze:</b> se pornesc singure când completezi repetările unui set, cu durata potrivită exercițiului; le poți porni și din butonul „Pauză”.</div>';
+  document.getElementById('mBody').innerHTML = h;
+  document.getElementById('modalBg').classList.add('open');
+}
+
+/* ================= BOOT ================= */
+function refreshDay(){ renderDaytabs(); renderDay(); }
+function refreshAll(doScroll){ renderWeekstrip(doScroll); refreshDay(); updateDeloadReminder(); }
+
+/* ================= DELOAD: SELECTOR + REMINDER ================= */
+function openDeloadPicker(){
+  document.getElementById('addExTitle').textContent = 'Săptămâni de deload';
+  document.getElementById('addExSub').textContent = '';
+  renderDeloadPicker();
+  document.getElementById('addExBg').classList.add('open');
+}
+function renderDeloadPicker(){
+  syncDeload();
+  const body = document.getElementById('addExBody');
+  body.dataset.mode = 'deload';
+  let html = '<div class="msub" style="margin-bottom:8px">Atinge o săptămână ca să o marchezi/demarchezi ca deload (volum −50%, RIR 4). Alegerea se salvează automat și o poți retrage oricând.</div>';
+  for(let w=1; w<=WEEKS; w++){
+    const on = DELOAD.includes(w);
+    const trained = hasAnyDay(w);
+    html += '<div class="addexopt" data-dlw="'+w+'" style="display:flex;justify-content:space-between;align-items:center'+(on?';border-left:3px solid var(--amber);padding-left:8px':'')+'">'
+      + '<div><div class="exname">Săptămâna '+w+' <span style="color:var(--muted);font-size:11px">(Luna '+MONTH_OF(w)+')</span></div>'
+      + '<div class="extarget">'+(trained?'are antrenamente logate':'nelogată încă')+'</div></div>'
+      + '<div style="font-family:Oswald,sans-serif;font-size:13px;color:'+(on?'var(--amber)':'var(--muted)')+'">'+(on?'DELOAD ✓':'—')+'</div>'
+      + '</div>';
+  }
+  body.innerHTML = html;
+  body.querySelectorAll('[data-dlw]').forEach(el=>{
+    el.addEventListener('click', e=>toggleDeloadWeek(+e.currentTarget.dataset.dlw));
+  });
+}
+function hasAnyDay(w){
+  for(let d=0; d<6; d++) if(hasEntries(w,d)) return true;
+  return false;
+}
+function updateDeloadReminder(){
+  syncDeload();
+  const el = document.getElementById('dlRemind');
+  const last = lastEntryPos();
+  if(!last){ el.style.display='none'; return; }
+  const pastDl = DELOAD.filter(w=>w<=last.w);
+  const lastDl = pastDl.length ? Math.max(...pastDl) : 0;
+  let trainedSince = 0;
+  for(let w=lastDl+1; w<=last.w; w++) if(hasAnyDay(w)) trainedSince++;
+  const upcoming = DELOAD.some(w=>w>last.w);
+  if(trainedSince >= 6 && !upcoming){
+    el.innerHTML = '<b>SUGESTIE DELOAD</b> — ai '+trainedSince+' săptămâni antrenate fără deload. Ia în calcul să setezi una în curând (butonul 🛌 de jos). Decizia rămâne a ta.';
+    el.style.display = 'block';
+  } else el.style.display = 'none';
+}
+
+(function init(){
+  document.getElementById('dayNote').addEventListener('input', e=>{
+    getLog(curWeek,curDay).note = e.target.value;
+    scheduleSave();
+  });
+  detectStorage();
+  loadAll();
+  // poziția: ultima vizitată; altfel ziua de după ultimul antrenament logat
+  if(DATA.cur && DATA.cur.w>=1 && DATA.cur.w<=WEEKS && DATA.cur.d>=0 && DATA.cur.d<6){
+    curWeek = DATA.cur.w; curDay = DATA.cur.d;
+  } else {
+    const last = lastEntryPos();
+    if(last){ if(last.d<5){ curWeek=last.w; curDay=last.d+1; } else { curWeek=Math.min(WEEKS,last.w+1); curDay=0; } }
+  }
+  const b = document.getElementById('storageBanner');
+  if(MODE === 'memory'){
+    b.innerHTML = '<b>DATELE NU SE SALVEAZĂ AICI</b> — browserul blochează stocarea. Folosește Backup după fiecare antrenament sau deschide jurnalul de pe adresa ta (GitHub Pages).';
+    b.style.display = 'block';
+  } else if(isEphemeralHost()){
+    b.innerHTML = '<b>ADRESĂ TEMPORARĂ</b> — deschis din chat sau dintr-un cadru izolat. Ce loghezi aici se poate pierde fără avertisment. Deschide jurnalul de pe adresa ta GitHub Pages și importă un backup.';
+    b.style.display = 'block';
+  }
+  if(MODE==='local'){
+    if(navigator.storage && navigator.storage.persist){ navigator.storage.persist().catch(()=>{}); }
+    saveNow();
+  } else setSaveState('NESALVAT — vezi mesajul de sus','err');
+  refreshAll(true);
+  updateBackupReminder();
+})();
+</script>
+</body>
+</html>
