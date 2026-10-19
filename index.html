@@ -165,7 +165,7 @@ nav.bnav button.on{color:var(--amber);border-color:var(--amber)}
 <body>
 
 <h1>JURNAL FLORIN <span class="accent">PPL</span> — 6 LUNI</h1>
-<div class="sub">Push · Pull · Legs ×2/săpt. · Progresie dublă · RIR 1-2 · v6</div>
+<div class="sub">Push · Pull · Legs ×2/săpt. · Progresie dublă · RIR 1-2 · v7</div>
 <div class="savestate" id="saveState">—</div>
 
 <div id="storageBanner" class="banner err" style="display:none"></div>
@@ -361,7 +361,7 @@ function toggleDeloadWeek(w){
   renderDeloadPicker();
 }
 const MONTH_OF = w => Math.ceil(w/4.0);
-const MASTER_KEY = 'ppl_all_v2';
+const MASTER_KEY = 'ppl_florin_v7'; /* cheie nouă = jurnal curat. Versiunile viitoare păstrează ACEEAȘI cheie. */
 
 /* ================= EXERCIȚII ALTERNATIVE (pt. adăugare punctuală) =================
    Categorie pe tip de zi: index 0,3 = Push · 1,4 = Pull · 2,5 = Legs */
@@ -444,8 +444,14 @@ const EXTRA_EXERCISES = {
 /* ================= STATE ================= */
 /* Tot jurnalul stă într-un singur obiect -> o singură cheie de storage.
    days["w{w}d{d}"] = { ex:[{done, sets:[{w,r}]}] } */
-let DATA = { days:{
-  /* recuperat din poze — Săpt. 1, Push A (pierdut înainte de fix-ul de salvare) */
+let DATA = { days:{} };
+
+/* ============ DATE RECUPERATE DIN SCREENSHOT-URI (S5-S10) ============
+   Se aplică NE-distructiv: doar zilele care lipsesc din salvare se completează. */
+const FACEPULL_REPL = { n:"Face pull la cablu, frânghie", t:"3 × 15-20", sets:3 };
+/* Istoricul vechi (săpt. 1-10, recuperat): NU intră în jurnal.
+   Servește doar ca referință de greutate până faci prima dată fiecare exercițiu. */
+const SEED_DAYS = {
   w1d1: { ex: [
     { done:true, sets:[{w:'40',r:'14'},{w:'50',r:'8'},{w:'60',r:'9'}] },
     { done:true, sets:[{w:'43',r:'7'},{w:'43',r:'7'},{w:'43',r:'8'}] },
@@ -453,13 +459,7 @@ let DATA = { days:{
     { done:true, sets:[{w:'4',r:'30'},{w:'6',r:'15'},{w:'5',r:'20'},{w:'4',r:'30'}] },
     { done:true, sets:[{w:'11.3',r:'10'},{w:'11.3',r:'8'},{w:'11.3',r:'6'}] },
     { done:true, sets:[{w:'20.4',r:'9'},{w:'18.1',r:'12'}] }
-  ]}
-} };
-
-/* ============ DATE RECUPERATE DIN SCREENSHOT-URI (S5-S10) ============
-   Se aplică NE-distructiv: doar zilele care lipsesc din salvare se completează. */
-const FACEPULL_REPL = { n:"Face pull la cablu, frânghie", t:"3 × 15-20", sets:3 };
-const SEED_DAYS = {
+  ], extra:[], repl:{}, note:'' },
   w5d1: { ex:[
     {done:true, sets:[{w:'40',r:'12'},{w:'50',r:'12'},{w:'60',r:'10'}]},
     {done:true, sets:[{w:'45.3',r:'12'},{w:'45.3',r:'10'},{w:'45.3',r:'9'}]},
@@ -549,12 +549,24 @@ const SEED_DAYS = {
     {done:true, sets:[{w:'43',r:'12'},{w:'57',r:'15'},{w:'57',r:'15'}]}
   ], extra:[], repl:{}, note:'' }
 };
-function applySeed(){
+const HIST_DELOAD = [6];
+let BASELINE = null;
+function buildBaseline(){
+  BASELINE = {};
+  const norm = x => String(x).trim().toLowerCase();
   Object.keys(SEED_DAYS).forEach(k=>{
-    if(!DATA.days[k]) DATA.days[k] = JSON.parse(JSON.stringify(SEED_DAYS[k]));
+    const m = k.match(/^w(\d+)d(\d+)$/); const w = +m[1], d = +m[2]-1;
+    if(HIST_DELOAD.includes(w)) return;
+    const lg = SEED_DAYS[k];
+    const put = (name, entry)=>{
+      if(!entry || !entry.sets || !entry.sets.some(s=>s.w!==''&&s.r!=='')) return;
+      const key = norm(name);
+      if(!BASELINE[key] || w > BASELINE[key].w || (w===BASELINE[key].w && d > BASELINE[key].d))
+        BASELINE[key] = {w, d, entry:{sets:entry.sets.map(s=>({w:s.w, r:s.r})), rir:null}, baseline:true};
+    };
+    PROGRAM[d].ex.forEach((e,i)=>put((lg.repl && lg.repl[i]) ? lg.repl[i].n : e.n, lg.ex[i]));
+    (lg.extra||[]).forEach(x=>put(x.n, x));
   });
-  if(!Array.isArray(DATA.deload)) DATA.deload = [];
-  if(!DATA.deload.includes(6)) DATA.deload.push(6);
 }
 let curWeek = 1, curDay = 0;
 let saveTimer = null, dirty = false;
@@ -678,7 +690,9 @@ function lastPerformanceOf(name, beforeW, beforeD){
       });
     }
   }
-  return best || bestDl;
+  if(best || bestDl) return best || bestDl;
+  if(!BASELINE) buildBaseline();
+  return BASELINE[target] || null;
 }
 /* pauza, grupa și tehnica pentru orice exercițiu afișat (original, înlocuitor sau adăugat) */
 function restFor(def, slotDef){
@@ -747,7 +761,7 @@ function loadAll(){
   if(MODE==='local'){ try{ v = localStorage.getItem(MASTER_KEY); }catch(e){} }
   if(v){ try{ const o = JSON.parse(v); if(o && o.days){ DATA = o; } }catch(e){} }
   if(!DATA.days) DATA.days = {};
-  applySeed();
+  buildBaseline();
   syncDeload();
 }
 function scheduleSave(){
@@ -919,9 +933,11 @@ function renderDay(){
         const sg = suggestToday(perf.entry, exDef);
         if(sg) suggHtml = '<br>Sugestie azi: <span class="sugg">'+sg.txt+'</span>';
       }
-      const refLabel = (perf.w === curWeek-1 && perf.d === curDay)
-        ? 'Săpt. trecută'
-        : 'Ultima dată la acest exercițiu (S'+perf.w+' · '+PROGRAM[perf.d].short+')';
+      const refLabel = perf.baseline
+        ? 'Referință din jurnalul vechi'
+        : (perf.w === curWeek-1 && perf.d === curDay)
+          ? 'Săpt. trecută'
+          : 'Ultima dată la acest exercițiu (S'+perf.w+' · '+PROGRAM[perf.d].short+')';
       const rirTxt = (perf.entry.rir===0||perf.entry.rir) ? ' · RIR '+(perf.entry.rir>=3?'3+':perf.entry.rir) : '';
       lastHtml = '<div class="lastweek">'+refLabel+': <b>'+fmtSets(perf.entry)+'</b>'+rirTxt+suggHtml+'</div>';
     } else if(replaced || kind==='extra'){
@@ -1344,7 +1360,7 @@ function applyImport(txt){
   const parsed = JSON.parse(txt);
   if(!parsed || typeof parsed.days !== 'object') throw new Error('nu e un backup al acestui jurnal');
   if(!confirm('Înlocuiești datele de acum cu cele din backup?')) return false;
-  DATA = parsed; applySeed(); syncDeload();
+  DATA = parsed; syncDeload();
   saveNow();
   document.getElementById('backupBg').classList.remove('open');
   refreshAll(true);
